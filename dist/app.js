@@ -73,10 +73,14 @@ function curve(type) {
   return `<svg class="mini-curve" viewBox="0 0 49 36" aria-hidden="true"><path d="${paths[type]}" fill="none" stroke="#bd718e" stroke-width="3.5" stroke-linecap="round"/></svg>`;
 }
 function choicesScreen(step) {
-  return `${title(step)}<div class="choices" aria-label="Opciones">${step.options.map(o => `<button class="choice" data-choice="${o.value}" aria-pressed="${savedSelection(step, o.value)}">
+  return `${title(step)}<div class="choices" aria-label="Opciones">${step.options.map((o, index) => {
+    const imageKey = o.image || `pergunta${step.question}${index ? `(${index + 1})` : ''}`;
+    const hasImage = Boolean(assets[imageKey]);
+    return `<button class="choice" data-choice="${o.value}" aria-pressed="${savedSelection(step, o.value)}">
     ${step.multiple ? '<span class="checkbox" aria-hidden="true"></span>' : ''}<span class="choice-copy"><strong>${o.label}</strong>${o.detail ? `<small>${o.detail}</small>` : ''}</span>
-    ${o.image ? asset(o.image, '', 'choice-image') : ''}${o.icon ? `<span class="choice-icon" aria-hidden="true">${o.icon}</span>` : ''}${o.curve ? curve(o.curve) : ''}${o.level ? `<span class="activity-level" aria-hidden="true">${[1, 2, 3, 4, 5].map(level => `<i class="${level <= o.level ? 'on' : ''}" style="height:${5 + level * 4}px"></i>`).join('')}</span>` : ''}
-    </button>`).join('')}</div>${step.multiple || step.confirm ? nextButton('Continuar', !canContinue(step)) : ''}${step.multiple ? '<p class="multi-hint">Puedes elegir más de una opción.</p>' : ''}`;
+    ${hasImage ? asset(imageKey, '', 'choice-image') : ''}${!hasImage && o.icon ? `<span class="choice-icon" aria-hidden="true">${o.icon}</span>` : ''}${!hasImage && o.curve ? curve(o.curve) : ''}${!hasImage && o.level ? `<span class="activity-level" aria-hidden="true">${[1, 2, 3, 4, 5].map(level => `<i class="${level <= o.level ? 'on' : ''}" style="height:${5 + level * 4}px"></i>`).join('')}</span>` : ''}
+    </button>`;
+  }).join('')}</div>${step.multiple || step.confirm ? nextButton('Continuar', !canContinue(step)) : ''}${step.multiple ? '<p class="multi-hint">Puedes elegir más de una opción.</p>' : ''}`;
 }
 function welcomeScreen(step) { return `${title(step)}${asset('welcome', 'Mujeres compartiendo un momento juntas', 'welcome-image')}<p class="welcome-copy">Vamos a crear tu plan personalizado.</p>${nextButton()}`; }
 function proofScreen(step) {

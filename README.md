@@ -51,7 +51,7 @@ O manifesto de imagens é gerado em `dist/assets-manifest.js`; os arquivos são 
 | garantia7dias | Selo gerado em espanhol |
 | logo ou dancefit-logo | Logo opcional; quando ausente, usa a marca tipográfica DanceFit |
 
-A numeração `pergunta` conta apenas perguntas. `etapa` conta também telas intermediárias. O mapa de conteúdo está em `dist/content.js`; imagens adicionais podem ser associadas às opções pelo campo `image`. A reutilização especial das perguntas 3 e 4 já está implementada.
+A numeração `pergunta` conta apenas perguntas. `etapa` conta também telas intermediárias. Nas perguntas de alternativas, novas imagens seguem automaticamente `perguntaN`, `perguntaN(2)`, `perguntaN(3)` etc., na ordem das opções. O mapa de conteúdo está em `dist/content.js`; o campo `image` permite uma associação explícita e tem prioridade. A reutilização especial das perguntas 3 e 4 já está implementada.
 
 ## Edição da copy e lógica
 
