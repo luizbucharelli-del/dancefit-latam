@@ -7,6 +7,7 @@ export const CONFIG = Object.freeze({
   compareAtPrice: null,
   guaranteeDays: 7,
   programDays: 28,
-  // Sin fecha real de vencimiento no se muestra un contador de urgencia.
-  offerEndsAt: null,
+  // Una única ventana por navegador para esta oferta. No reinicia al recargar.
+  offerId: 'dancefit-usd990-v1',
+  offerDurationMinutes: 10,
 });

@@ -18,7 +18,15 @@ Edite `dist/config.js` e preencha `checkoutUrl` com o endereço HTTPS real do ch
 
 Enquanto o endereço não for informado, os dois botões de compra abrem uma mensagem de inscrições em breve. Não há checkout fictício, cobrança, coleta de cartão nem confirmação de compra simulada. Nome, medidas e respostas não são acrescentados à URL do checkout; apenas parâmetros UTM conhecidos são preservados.
 
-`compareAtPrice` está nulo porque a copy trouxe US$ 9,90 como preço anterior e atual. Um preço riscado só aparece quando configurado e maior que o preço de venda. `offerEndsAt` também está nulo: o cronômetro só aparece quando houver uma data real em formato ISO. Não há contagem reiniciável.
+`compareAtPrice` está nulo porque a copy trouxe US$ 9,90 como preço anterior e atual. Um preço riscado só aparece quando configurado e maior que o preço de venda.
+
+O prazo individual de 10 minutos começa na primeira abertura da oferta. `offerId` identifica a mesma campanha e `offerDurationMinutes` define sua duração. O vencimento absoluto fica em localStorage e sessionStorage: voltar, recarregar e refazer o quiz não renovam o prazo. Ao zerar, os dois botões ficam desabilitados; o clique também verifica o vencimento. Sem armazenamento disponível, a oferta fica indisponível. A proteção atual é por navegador: limpar dados, alterar relógio ou trocar de dispositivo não são impedidos. A expiração no processador de pagamento exige validação no servidor/checkout, ainda não integrado.
+
+## Personalização
+
+`dist/logic.js` monta quatro semanas por regras determinísticas. Experiência, atividade atual, tempo disponível e histórico determinam o ponto de partida e progressão. Ritmo escolhido é respeitado; automático considera experiência e rotina. Todos os objetivos e áreas selecionados são preservados, com áreas alternadas nas semanas. Limitações suspendem progressão automática e pedem revisão dos movimentos antes de começar. Idade, percepção corporal, medidas, evento e histórico aparecem no resumo; imagens finais seguem as escolhas corporais. Peso atual e meta ajustam a mensagem, inclusive manutenção ou respostas contraditórias, sem prever quilos perdidos nem diagnosticar metabolismo. Voltar e editar respostas recalcula o plano.
+
+As semanas são uma proposta organizacional, não prescrição clínica nem seleção de aulas reais de um catálogo conectado. A orientação de começar gradualmente e revisar limitações acompanha as [orientações gerais do CDC](https://www.cdc.gov/physical-activity-basics/guidelines/chronic-health-conditions-and-disabilities.html). As avaliações com Lucía Fernández e Carmen García estão identificadas como exemplos ilustrativos com nomes fictícios; substituir por relatos autorizados antes de usá-las como prova social real.
 
 ## Imagens
 

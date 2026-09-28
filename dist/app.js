@@ -1,6 +1,7 @@
 import { CONFIG } from './config.js';
 import { STEPS, LOADING_ITEMS, TESTIMONIALS, FAQ } from './content.js';
 import { toggleSelection, toDisplay, toMetric, bmi, profile, priceLabel, escapeHtml as esc, safeCheckoutUrl } from './logic.js';
+import { resolveDeadline, remainingSeconds } from './offer-clock.js';
 
 const app = document.querySelector('#app');
 const back = document.querySelector('#back');
@@ -10,6 +11,14 @@ const stepLabel = document.querySelector('#step-label');
 const assets = window.DANCEFIT_ASSETS || {};
 const STORE = 'dancefit-latam-session-v1';
 const TTL = 24 * 60 * 60 * 1000;
+const OFFER_KEY = `dancefit-offer-deadline:${CONFIG.offerId}`;
+function storage(type) { try { return window[type]; } catch { return null; } }
+function offerDeadline() {
+  const deadline = resolveDeadline({ stores: [storage('localStorage'), storage('sessionStorage')], key: OFFER_KEY, now: Date.now(), durationMs: CONFIG.offerDurationMinutes * 60000, remembered: state.offerDeadline });
+  state.offerDeadline = deadline;
+  persist();
+  return deadline;
+}
 const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
 const lockIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v3"/></svg>';
 const arrowIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
@@ -111,7 +120,7 @@ function summaryScreen(step) {
   const score = value === null ? '—' : value.toLocaleString('es-AR', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
   return `${title(step)}<div class="summary-grid">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'summary-portrait')}<dl class="summary-facts"><div class="fact"><dt>Nivel de baile</dt><dd>${info.level}</dd></div><div class="fact"><dt>Tipo de cuerpo</dt><dd>${info.body}</dd></div><div class="fact"><dt>Lo que nos contaste</dt><dd>${info.story}</dd></div></dl></div>
     <div class="bmi-box"><div class="bmi-title"><span>ÍNDICE DE MASA CORPORAL (IMC)</span><span class="bmi-score">${score}</span></div><div class="bmi-scale"><span class="bmi-pin" style="left:${value === null ? 0 : Math.min(98, Math.max(2, (value - 15) / 25 * 100))}%"></span></div><div class="bmi-legend"><span>Tu IMC</span><strong>${label}</strong></div></div>
-    <p class="medical-note">El IMC es una referencia general y no reemplaza una evaluación médica. Tus respuestas describen tus preferencias; no permiten diagnosticar tu metabolismo.</p>${nextButton()}`;
+    <div class="profile-preview"><span>Tu punto de partida</span><h2>${info.path}</h2><p>${info.startMinutes} min por sesión · ${info.days} días por semana</p><p>${info.rhythm}</p></div><p class="medical-note">El IMC es una referencia general y no reemplaza una evaluación médica. ${info.needsReview ? info.care : 'Tus respuestas describen tus preferencias; no permiten diagnosticar tu metabolismo.'}</p>${nextButton()}`;
 }
 function nameScreen(step) {
   return `${title(step)}<form class="name-form"><input id="name-field" class="name-field" name="given-name" type="text" autocomplete="given-name" placeholder="Escribe tu nombre…" value="${esc(state.answers.name || '')}" minlength="2" maxlength="60" aria-label="Tu nombre" required>${nextButton('Continuar', !canContinue(step))}</form>`;
@@ -120,6 +129,7 @@ function testimonialsScreen(step) {
   return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan está casi listo</span><strong id="loading-percent">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><h2 class="testimonial-title">Durante los últimos 30 días, las usuarias del plan perdieron 10 kg. 😍</h2><div class="testimonials">${TESTIMONIALS.map(t => `<article class="testimonial"><div class="stars" aria-label="5 de 5 estrellas">★★★★★</div><strong>${t.name}</strong><small>${t.handle}</small><p>${t.text}</p></article>`).join('')}</div>`;
 }
 function projectionScreen(step) {
+  const info = profile(state.answers);
   const current = Number(state.answers.weight) || 70;
   const target = Number(state.answers.target) || 60;
   const format = n => n.toLocaleString('es-AR', { maximumFractionDigits: 1 });
@@ -127,28 +137,39 @@ function projectionScreen(step) {
   const low = Math.max(0, Math.min(current, target) - 25);
   const y = n => 222 - (n - low) / (high - low) * 164;
   const y1 = y(current), y2 = y(target), ym = (y1 + y2) / 2;
-  return `${title(step)}<p class="projection-copy">Según tus respuestas, este es el objetivo que quieres alcanzar:</p><h2 class="target-title">${format(target)} kg</h2><p class="projection-copy">Prepárate para empezar tu programa de ${CONFIG.programDays} días.</p>
+  return `<div class="heading"><h1>Tu punto de partida: <em>${info.path.toLowerCase()}</em></h1><p>${info.goal}</p></div><p class="projection-copy">${info.direction === 'maintain' ? 'Tu referencia de peso actual y objetivo:' : 'Este es el peso objetivo que elegiste:'}</p><h2 class="target-title">${format(target)} kg</h2><p class="projection-copy">${info.startMinutes} min por sesión · ${info.days} días por semana · ${info.level.toLowerCase()}</p>
     <div class="projection-chart"><svg viewBox="0 0 610 280" role="img" aria-label="Tu peso actual es ${format(current)} kilos y tu objetivo es ${format(target)} kilos. Ilustración de tu meta, no una predicción."><defs><linearGradient id="chart-gradient"><stop offset="0" stop-color="#f39691"/><stop offset=".5" stop-color="#f0d48e"/><stop offset="1" stop-color="#91cca3"/></linearGradient></defs>
       ${[60, 115, 170, 225].map(v => `<line x1="37" y1="${v}" x2="577" y2="${v}" stroke="#e8d9dc" stroke-dasharray="4 5"/>`).join('')}
       <path d="M37 ${y1} Q177 ${ym} 307 ${ym} T577 ${y2} L577 225 L37 225Z" fill="url(#chart-gradient)" opacity=".72"/>
       <path d="M37 ${y1} Q177 ${ym} 307 ${ym} T577 ${y2}" stroke="#cb897b" stroke-width="3" fill="none"/>
       <circle cx="37" cy="${y1}" r="7" fill="#e8777d" stroke="white" stroke-width="4"/><circle cx="307" cy="${ym}" r="7" fill="#d1ad7a" stroke="white" stroke-width="4"/><circle cx="577" cy="${y2}" r="7" fill="#64a782" stroke="white" stroke-width="4"/>
       <text x="37" y="${y1 - 21}" text-anchor="start" class="chart-text" style="font-weight:bold;fill:#bd5b79">${format(current)} kg</text><text x="577" y="${y2 - 21}" text-anchor="end" class="chart-text" style="font-weight:bold;fill:#428566">${format(target)} kg</text><text x="37" y="262" text-anchor="start" class="chart-text">Hoy</text><text x="307" y="262" text-anchor="middle" class="chart-text">Tu progreso</text><text x="577" y="262" text-anchor="end" class="chart-text">Tu objetivo</text></svg></div>
-      <p class="chart-note">Representación de tu objetivo, no una predicción. Los resultados y el tiempo necesario varían de una persona a otra.</p>${nextButton()}`;
+      <p class="chart-note">${info.weightNote} Los resultados y el tiempo necesario varían de una persona a otra.</p>${nextButton()}`;
 }
 function planScreen() {
   const name = esc(state.answers.name?.trim() || 'ti');
   const info = profile(state.answers);
-  return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Creamos un <strong>plan 100% personalizado</strong> basado en tus respuestas.</p><dl class="plan-facts"><div><dt>Lo que nos contó ${name}</dt><dd>${info.story}</dd></div><div><dt>Rutina ideal</dt><dd>${info.minutes} min por día</dd></div><div><dt>Nivel</dt><dd>${info.level}</dd></div><div><dt>Objetivo</dt><dd>${info.goal}</dd></div><div><dt>Resultado esperado</dt><dd>${info.result}</dd></div></dl>${nextButton('Ver mi plan completo')}`;
+  const rows = [
+    ['Tu ruta', info.path], ['Tu punto de partida', `${info.startMinutes} min por sesión · ${info.days} días por semana`],
+    ['Tiempo que tienes disponible', `Hasta ${info.minutes} min por sesión`], ['Nivel de baile', info.level], ['Ritmos', info.rhythm],
+    ['Tus objetivos', info.goal], ['Áreas que elegiste', info.focus], ['Tu motivación', info.event], ['Lo que buscas conseguir', info.result],
+  ];
+  return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Esta es tu <strong>propuesta personalizada</strong> de ${CONFIG.programDays} días, basada en tus respuestas.</p><dl class="plan-facts">${rows.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
+    <section class="plan-reasons"><h2>Por qué esta ruta es para ti</h2><ul>${info.reasons.map(reason => `<li>${reason}</li>`).join('')}</ul></section>
+    <section class="weekly-plan"><h2>Tu ruta de 28 días</h2><p class="section-intro">Una organización sugerida. Puedes repetir una semana antes de avanzar.</p>${info.weeks.map(week => `<details class="week-card" ${week.week === 1 ? 'open' : ''}><summary><span>Semana ${week.week}</span><strong>${week.theme}</strong><small>${week.sessions} sesiones · ${week.minutes} min</small></summary><div><p>${week.days}</p><p>${week.rhythm}</p><p>Tu interés: ${week.focus}</p><p class="week-note">${week.note}</p></div></details>`).join('')}</section>
+    <details class="answer-recap"><summary>Tus preferencias y medidas</summary><dl><div><dt>Grupo de edad</dt><dd>${info.ageGroup}</dd></div><div><dt>Tu percepción corporal</dt><dd>${info.body} → ${info.dream}</dd></div><div><dt>Tu historia</dt><dd>${info.history}</dd></div><div><dt>Lo que nos contaste</dt><dd>${info.story}</dd></div><div><dt>Tus medidas</dt><dd>${Number(state.answers.height) || '—'} cm · ${info.current ?? '—'} kg</dd></div><div><dt>Meta declarada</dt><dd>${info.target ?? '—'} kg</dd></div></dl><p>${info.weightNote}</p></details><p class="medical-note">${info.care}</p>${nextButton('Ver mi plan completo')}`;
 }
-function buyButton() { return `<button class="primary purchase" data-action="checkout">Quiero empezar ahora ${arrowIcon}</button>`; }
+function buyButton() { const expired = remainingSeconds(state.offerDeadline) === 0; return `<button class="primary purchase" data-action="checkout" ${expired ? 'disabled' : ''}>${expired ? 'Oferta finalizada' : `Quiero empezar ahora ${arrowIcon}`}</button>`; }
 function offerScreen() {
+  const info = profile(state.answers);
+  const deadline = offerDeadline();
+  const seconds = remainingSeconds(deadline);
   const name = esc(state.answers.name?.trim() || '');
   const compare = CONFIG.compareAtPrice && CONFIG.compareAtPrice > CONFIG.price ? `<del>Antes ${priceLabel(CONFIG.compareAtPrice, CONFIG.currency)}</del>` : '';
-  const timer = CONFIG.offerEndsAt && new Date(CONFIG.offerEndsAt).getTime() > Date.now() ? '<p class="offer-timer-label">Esta oferta termina en</p><div class="offer-timer" aria-label="Tiempo restante de la oferta"><div><strong id="timer-minutes">—</strong><small>MIN</small></div><span>:</span><div><strong id="timer-seconds">—</strong><small>SEG</small></div></div>' : '';
-  return `<div class="heading"><h1>¡Accede ya a tu plan de adelgazamiento con baile${name ? `, ${name}` : ''}!</h1></div>
-    <div class="before-after"><figure class="body-figure">${asset('before', 'Representación del punto de partida')}<figcaption>Ahora</figcaption></figure><span class="transform-arrow" aria-hidden="true">›</span><figure class="body-figure">${asset('after', 'Representación del objetivo')}<figcaption>Tu objetivo</figcaption></figure></div>
-    <ul class="benefits"><li>Plan personal de pérdida de peso de ${CONFIG.programDays} días adaptado a tu edad, tipo de cuerpo e IMC.</li><li>Entrenamientos cortos pero efectivos. Solo 10 minutos al día para quemar grasa rápidamente.</li><li>Más de 300 entrenamientos de baile y programas especiales.</li><li>Practica en cualquier lugar y sin equipo.</li><li>Los estilos de baile más populares: prueba uno nuevo todos los días.</li></ul>
+  const timer = `<div class="urgency-panel"><p class="offer-timer-label">${seconds ? 'Tu oferta personal termina en' : 'El plazo de tu oferta terminó'}</p><div class="offer-timer" role="timer" aria-label="Tiempo restante de tu oferta" aria-live="off"><div><strong id="timer-minutes">${String(Math.floor(seconds/60)).padStart(2,'0')}</strong><small>MIN</small></div><span>:</span><div><strong id="timer-seconds">${String(seconds%60).padStart(2,'0')}</strong><small>SEG</small></div></div><p id="offer-status" role="status">${seconds ? 'Tienes 10 minutos desde la primera vez que abres esta oferta.' : deadline === null ? 'La oferta no está disponible en este momento.' : 'Esta oferta ya no está disponible. Tu plan sigue guardado en esta sesión.'}</p></div>`;
+  return `<div class="heading"><h1>¡Accede ya a tu plan de ${info.goals.includes('weight') && info.direction === 'lose' ? 'adelgazamiento con baile' : 'baile personalizado'}${name ? `, ${name}` : ''}!</h1><p>${info.path} · ${info.level.toLowerCase()}</p></div>
+    <div class="before-after"><figure class="body-figure">${asset(info.beforeImage, 'Representación de la opción corporal que elegiste')}<figcaption>Ahora</figcaption></figure><span class="transform-arrow" aria-hidden="true">›</span><figure class="body-figure">${asset(info.afterImage, 'Representación del objetivo corporal que elegiste')}<figcaption>Tu objetivo</figcaption></figure></div>
+    <ul class="benefits"><li>Tu programa de ${CONFIG.programDays} días: ${info.goal.toLowerCase()}.</li><li>Empieza con ${info.startMinutes} minutos por sesión, ${info.days} días por semana, dentro de los ${info.minutes} minutos que tienes disponibles.</li><li>${info.rhythm}. Áreas de interés: ${info.focus.toLowerCase()}.</li><li>${info.needsReview ? 'Propuesta pendiente de revisar tus molestias antes de iniciar.' : 'Una progresión de cuatro semanas a tu ritmo.'}</li><li>Más de 300 entrenamientos de baile y programas especiales.</li><li>Practica en cualquier lugar y sin equipo.</li></ul>
     ${timer}<div class="price-card"><div class="price-top"><span class="payment-label">PAGO ÚNICO</span><div class="price">${compare}<strong>${priceLabel(CONFIG.price, CONFIG.currency)}</strong><small>DÓLARES ESTADOUNIDENSES</small></div></div>${buyButton()}<p class="secure-payment">${lockIcon} Pago 100% seguro</p></div>
     <section class="access-card"><h2>¿Cómo recibiré mi acceso a todo esto?</h2><p>Después de confirmar tu compra, recibirás un correo electrónico con tu acceso a nuestra Área de Alumnas. Dentro encontrarás todas las clases organizadas, una para cada día de la semana: solo tienes que darle play y empezar.</p></section>
     <section class="guarantee">${asset('guarantee', 'Garantía de devolución de 7 días')}<h2>Garantía de devolución del 100% de tu dinero</h2><p>Confiamos en la calidad de nuestro plan. Si en ${CONFIG.guaranteeDays} días no sientes la diferencia, solo tienes que avisarnos y te devolvemos cada centavo.</p></section>
@@ -167,7 +188,7 @@ function render() {
   app.innerHTML = `<section class="screen" data-step="${step.id}">${renderers[step.type](step)}</section>`;
   document.title = step.type === 'offer' ? 'Tu plan DanceFit — US$ 9,90' : 'DanceFit — Tu plan de baile';
   if (step.type === 'loading' || step.type === 'testimonials') startLoading(step.type === 'loading' ? 4800 : 6000);
-  if (step.type === 'offer' && CONFIG.offerEndsAt) startOfferTimer();
+  if (step.type === 'offer') startOfferTimer();
   persist();
 }
 function startLoading(duration) {
@@ -192,15 +213,22 @@ function startLoading(duration) {
 }
 function startOfferTimer() {
   const update = () => {
-    const total = Math.max(0, Math.floor((new Date(CONFIG.offerEndsAt).getTime() - Date.now()) / 1000));
+    const total = remainingSeconds(state.offerDeadline);
     const min = document.querySelector('#timer-minutes');
     if (!min) return;
     min.textContent = String(Math.floor(total / 60)).padStart(2, '0');
     document.querySelector('#timer-seconds').textContent = String(total % 60).padStart(2, '0');
-    if (total === 0) { document.querySelector('.offer-timer')?.remove(); document.querySelector('.offer-timer-label')?.remove(); }
-    else later(update, 1000);
+    if (total === 0) expireOffer();
+    else later(update, 250);
   };
   update();
+}
+function expireOffer() {
+  app.querySelectorAll('[data-action=checkout]').forEach(button => { button.disabled = true; button.textContent = 'Oferta finalizada'; });
+  const label = app.querySelector('.offer-timer-label');
+  if (label) label.textContent = 'El plazo de tu oferta terminó';
+  const status = app.querySelector('#offer-status');
+  if (status) status.textContent = state.offerDeadline === null ? 'La oferta no está disponible en este momento.' : 'Esta oferta ya no está disponible. Tu plan sigue guardado en esta sesión.';
 }
 
 app.addEventListener('click', event => {
@@ -226,6 +254,7 @@ app.addEventListener('click', event => {
   }
   if (event.target.closest('[data-action=next]')) { event.preventDefault(); next(); }
   if (event.target.closest('[data-action=checkout]')) {
+    if (remainingSeconds(offerDeadline()) === 0) { expireOffer(); return; }
     const url = safeCheckoutUrl(CONFIG.checkoutUrl, location.search);
     document.dispatchEvent(new CustomEvent('dancefit:checkout', { detail: { configured: Boolean(url), price: CONFIG.price, currency: CONFIG.currency } }));
     if (url) location.assign(url);
@@ -268,6 +297,8 @@ window.addEventListener('popstate', () => {
   const index = STEPS.findIndex(step => `#${step.id}` === location.hash);
   go(index >= 0 && index <= state.maxVisited ? index : 0, true);
 });
+window.addEventListener('storage', event => { if (event.key === OFFER_KEY && STEPS[state.index].type === 'offer') render(); });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && STEPS[state.index].type === 'offer') { stopTimers(); offerDeadline(); startOfferTimer(); } });
 document.querySelector('#year').textContent = new Date().getFullYear();
 if (assets.logo) document.querySelector('.wordmark').innerHTML = asset('logo', 'DanceFit', 'brand-image');
 const initialHash = STEPS.findIndex(step => `#${step.id}` === location.hash);

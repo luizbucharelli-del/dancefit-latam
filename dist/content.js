@@ -37,8 +37,8 @@ export const LOADING_ITEMS = [
 ];
 
 export const TESTIMONIALS = [
-  { name: 'Camila Ferreira', handle: '@camila.ferreira', text: 'No era solo por el peso, era por el desánimo… Hoy tengo mucha más energía y ánimo.' },
-  { name: 'Márcia B.', handle: '@marcia.b', text: '¡Empecé pensando que no iba a poder y en pocas semanas ya sentía la diferencia en mi cuerpo y en mi estado de ánimo!' },
+  { name: 'Lucía Fernández', handle: 'Ejemplo ilustrativo · nombre ficticio', text: 'No era solo por el peso, era por el desánimo… Hoy tengo mucha más energía y ánimo.' },
+  { name: 'Carmen García', handle: 'Ejemplo ilustrativo · nombre ficticio', text: '¡Empecé pensando que no iba a poder y en pocas semanas ya sentía la diferencia en mi cuerpo y en mi estado de ánimo!' },
 ];
 
 export const FAQ = [
