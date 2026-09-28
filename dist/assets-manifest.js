@@ -1,0 +1,27 @@
+// Gerado por scripts/sync-assets.mjs.
+window.DANCEFIT_ASSETS = {
+  "antesedepoisetapafinal": "assets/antesedepoisetapafinal.png",
+  "etapa05": "assets/etapa05.jpg",
+  "garantia7dias": "assets/garantia7dias.png",
+  "iconespergunta1(2)": "assets/iconespergunta1(2).jpg",
+  "iconespergunta1(3)": "assets/iconespergunta1(3).jpg",
+  "iconespergunta1": "assets/iconespergunta1.png",
+  "pergunta1(2)": "assets/pergunta1(2).png",
+  "pergunta1": "assets/pergunta1.png",
+  "pergunta2(2)": "assets/pergunta2(2).webp",
+  "pergunta2(3)": "assets/pergunta2(3).webp",
+  "pergunta2": "assets/pergunta2.webp",
+  "pergunta3(2)": "assets/pergunta3(2).png",
+  "pergunta3(3)": "assets/pergunta3(3).png",
+  "pergunta3": "assets/pergunta3.png",
+  "pergunta4(definido)": "assets/pergunta4(definido).png",
+  "zumba-e-saude-das-mulheres-3(1)": "assets/zumba-e-saude-das-mulheres-3(1).webp",
+  "zumba-e-saude-das-mulheres-3": "assets/zumba-e-saude-das-mulheres-3.webp",
+  "welcome": "assets/etapa05.jpg",
+  "ritmo1": "assets/zumba-e-saude-das-mulheres-3.webp",
+  "ritmo2": "assets/zumba-e-saude-das-mulheres-3(1).webp",
+  "before": "assets/antesedepoisetapafinal.png",
+  "after": "assets/pergunta3.png",
+  "guarantee": "assets/garantia7dias.png",
+  "proof": "assets/zumba-e-saude-das-mulheres-3.webp"
+};

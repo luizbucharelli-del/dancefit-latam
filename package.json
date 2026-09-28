@@ -1,0 +1,11 @@
+{
+  "name": "dancefit-latam",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "assets": "node scripts/sync-assets.mjs",
+    "check": "node --check dist/app.js && node --check dist/content.js && node --check dist/config.js && node --test tests/logic.test.mjs"
+  }
+}

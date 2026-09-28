@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es-419">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fff8f7">
+    <meta name="description" content="Descubre tu plan DanceFit: clases de baile, una rutina a tu ritmo y un programa de 28 días.">
+    <meta name="robots" content="noindex,nofollow">
+    <title>DanceFit — Tu plan de baile</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <script src="assets-manifest.js"></script>
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="header-row">
+          <button id="back" class="back-button" aria-label="Volver a la pregunta anterior" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg></button>
+          <a class="wordmark" href="#inicio" aria-label="DanceFit, inicio"><span>DANCE</span><em>fit</em><i aria-hidden="true">✦</i></a>
+          <span id="step-label" class="step-label"></span>
+        </div>
+        <div id="progress" class="progress-track" role="progressbar" aria-label="Progreso del plan" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
+      </header>
+      <main id="app" tabindex="-1"></main>
+      <footer class="site-footer">© <span id="year">2026</span> DanceFit</footer>
+    </div>
+    <dialog id="checkout-notice" aria-labelledby="checkout-title">
+      <button class="dialog-close" aria-label="Cerrar">×</button>
+      <div class="notice-icon" aria-hidden="true">♡</div>
+      <h2 id="checkout-title">Las inscripciones estarán disponibles pronto</h2>
+      <p>Tu plan está listo. Vuelve pronto para completar tu compra.</p>
+      <button class="primary dialog-close-action">Entendido</button>
+    </dialog>
+    <noscript>Activa JavaScript en tu navegador para completar tu plan de baile.</noscript>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+import { pathToFileURL } from 'node:url';
+const { chromium }=await import(pathToFileURL(process.argv[2]).href);
+const browser=await chromium.launch({channel:'chrome',headless:true});
+const page=await browser.newPage({viewport:{width:390,height:844}});
+await page.addInitScript(()=>sessionStorage.setItem('dancefit-latam-session-v1',JSON.stringify({index:24,maxVisited:24,startedAt:Date.now(),answers:{name:'Ana',weight:81,target:60,height:174},units:{}})));
+await page.goto('http://127.0.0.1:4173/#offer',{waitUntil:'networkidle'});
+const img=page.locator('.guarantee img');
+await img.evaluate(i=>i.decode());
+await img.scrollIntoViewIfNeeded();
+console.log(await img.evaluate(i=>({src:i.src,loaded:i.complete,width:i.naturalWidth,style:getComputedStyle(i).visibility,opacity:getComputedStyle(i).opacity,rect:i.getBoundingClientRect().toJSON()})));
+await page.screenshot({path:'test-results/garantia-verificada.png',animations:'disabled'});
+await page.screenshot({path:'test-results/oferta-final-verificada.png',fullPage:true,animations:'disabled'});
+await browser.close();
