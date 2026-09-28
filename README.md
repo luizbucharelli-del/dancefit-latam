@@ -45,7 +45,7 @@ O manifesto de imagens é gerado em `dist/assets-manifest.js`; os arquivos são 
 | etapa05 | Tela de acolhimento com três mulheres |
 | pergunta11 ou zumba-e-saude-das-mulheres-3 | Primeiro ritmo |
 | pergunta11(2) ou zumba-e-saude-das-mulheres-3 (1) | Segundo ritmo |
-| provasocial ou etapa10 | Foto do bloco editorial; usa a imagem de dança já fornecida se ausente |
+| etapa09-es ou etapa09 | Recorte da notícia em espanhol, com fotos preservadas e título azul sobre faixas verdes |
 | antesedepois etapa final | Imagem “Ahora” da oferta |
 | antesedepois etapa final(2) | Imagem “Tu objetivo”; usa pergunta3 se ausente |
 | garantia7dias | Selo gerado em espanhol |
@@ -88,3 +88,11 @@ Gerado com a ferramenta integrada ImageGen, sem API externa. Arquivo de origem: 
 Prompt final:
 
 > Use case: ads-marketing. Asset type: single transparent raster guarantee badge for a women's dance fitness offer in Latin American Spanish. Primary request: a premium circular metallic gold guarantee seal with serrated gold outer edge and deep dark navy blue center, refined polished dimensional metal details. Scene/backdrop: genuinely transparent background with alpha, no painted backdrop, no checkerboard pattern. Composition/framing: square canvas, complete circular seal centered, generous clear margin so no edges are cropped, front-facing. Typography: large, impeccably legible, bold premium uppercase lettering. Exactly four text elements: “GARANTÍA” along the upper arc, a very large “7” in the center, “DÍAS” directly below the numeral, and “DE DEVOLUCIÓN” along the lower arc. Preserve Spanish accents exactly: GARANTÍA, DÍAS, DEVOLUCIÓN. Color palette: metallic gold and dark navy blue; gold lettering on navy. Constraints: one badge only, no price, no additional text, no English or Portuguese, no watermark. Transparent pixels around the badge; preserve alpha.
+
+## Recorte de notícia em espanhol
+
+Imagem editada pela ferramenta integrada ImageGen a partir do recorte em português enviado pelo usuário. Arquivo: `../imagens funil/etapa09-es.png`. A tela de notícia usa a imagem inteira, sem a foto genérica de dança nem um título duplicado em HTML. As curvas laterais da pergunta de relação com o peso usam traços verdes e vermelhos, e as perguntas ilustradas com emojis seguem a referência enviada.
+
+Prompt final da edição:
+
+> Use case: text-localization. Asset type: localized Spanish LATAM editorial news clipping. Edit target: attached image. Change ONLY the Portuguese text to Spanish LATAM. Preserve rigorously the horizontal layout and overall proportions of the reference, approximately 715:408. White fully opaque background. Produce a large legible raster, approximately 1536 pixels wide. Preserve both left-side photographs exactly, the same women, faces, bodies, poses, clothing, photo framing and arrangement; do not recreate or change their transformation. Preserve the large blue headline on separate pale lime-green highlight strips to the right. Preserve small black caption and gray photo credit under the photographs, and bold black authorship below the headline. No extra branding. Headline: “Madre e hija adelgazan 83 kg con una clase de baile que quema 800 calorías”. Caption: “Jaime y Jean practican una modalidad que combina baile con ejercicios de fuerza”. Credit: “Imagen: Reproducción de Instagram”. Authorship: “De VivaBem”. Ensure Spanish accents and spelling are exact. Do not add DanceFit, any product relationship, other logos, text, objects, or decorations. Only localize the text; preserve the actual source photographs.

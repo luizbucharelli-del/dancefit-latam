@@ -2,6 +2,7 @@
 window.DANCEFIT_ASSETS = {
   "antesedepoisetapafinal": "assets/antesedepoisetapafinal.png",
   "etapa05": "assets/etapa05.jpg",
+  "etapa09-es": "assets/etapa09-es.png",
   "garantia7dias": "assets/garantia7dias.png",
   "iconespergunta1(2)": "assets/iconespergunta1(2).jpg",
   "iconespergunta1(3)": "assets/iconespergunta1(3).jpg",
@@ -23,5 +24,5 @@ window.DANCEFIT_ASSETS = {
   "before": "assets/antesedepoisetapafinal.png",
   "after": "assets/pergunta3.png",
   "guarantee": "assets/garantia7dias.png",
-  "proof": "assets/zumba-e-saude-das-mulheres-3.webp"
+  "proof": "assets/etapa09-es.png"
 };

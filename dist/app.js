@@ -69,8 +69,12 @@ function ageScreen(step) {
     <div class="trust-note"><span class="trust-icon">${lockIcon}</span><p><strong>100% seguro y confidencial</strong>Tus respuestas solo se usarán para personalizar tu plan.</p></div>`;
 }
 function curve(type) {
-  const paths = { up: 'M4 29Q10 5 25 7L44 7', wave: 'M4 29Q13-15 24 11T45 29', flat: 'M4 28H19Q25 27 29 15H44', zigzag: 'M4 27Q10-4 17 22T29 19T43 23' };
-  return `<svg class="mini-curve" viewBox="0 0 49 36" aria-hidden="true"><path d="${paths[type]}" fill="none" stroke="#bd718e" stroke-width="3.5" stroke-linecap="round"/></svg>`;
+  const paths = { up: 'M5 31C10 8 16 6 27 6H43', wave: 'M5 31C14-2 32-2 43 31', flat: 'M4 28H17C24 28 24 13 32 13H43', zigzag: 'M4 25C5 12 13 12 14 25S22 35 25 24S32 12 35 24S42 33 44 32' };
+  const stops = type === 'wave' || type === 'zigzag'
+    ? '<stop offset="0" stop-color="#58c657"/><stop offset=".5" stop-color="#ff6668"/><stop offset="1" stop-color="#58c657"/>'
+    : type === 'flat' ? '<stop offset="0" stop-color="#58c657"/><stop offset=".47" stop-color="#58c657"/><stop offset=".58" stop-color="#f17965"/><stop offset=".85" stop-color="#58c657"/>'
+    : '<stop offset="0" stop-color="#58c657"/><stop offset=".6" stop-color="#dc9a63"/><stop offset="1" stop-color="#ff6266"/>';
+  return `<svg class="mini-curve" viewBox="0 0 49 38" aria-hidden="true"><defs><linearGradient id="curve-${type}">${stops}</linearGradient></defs><path d="${paths[type]}" fill="none" stroke="url(#curve-${type})" stroke-width="3.2" stroke-linecap="round"/></svg>`;
 }
 function choicesScreen(step) {
   return `${title(step)}<div class="choices" aria-label="Opciones">${step.options.map((o, index) => {
@@ -84,7 +88,7 @@ function choicesScreen(step) {
 }
 function welcomeScreen(step) { return `${title(step)}${asset('welcome', 'Mujeres compartiendo un momento juntas', 'welcome-image')}<p class="welcome-copy">Vamos a crear tu plan personalizado.</p>${nextButton()}`; }
 function proofScreen(step) {
-  return `${title(step)}<article class="editorial-card">${asset('proof', 'Clase de baile en grupo', 'editorial-image')}<div class="editorial-body"><div class="editorial-eyebrow">Baile & bienestar</div><h2><mark>Madre e hija adelgazan 83 kg con una clase de baile que quema 800 calorías</mark></h2><p>Jaime y Jean practican una modalidad que combina baile con ejercicios de fuerza.</p></div></article><p class="pleasure-note"><span>✦</span> El ejercicio ligero funciona mejor cuando lo disfrutas. <span>✦</span></p>${nextButton()}`;
+  return `${title(step)}<article class="news-clipping">${asset('proof', 'Madre e hija adelgazan 83 kg con una clase de baile que quema 800 calorías. Jaime y Jean practican una modalidad que combina baile con ejercicios de fuerza. Imagen: Reproducción de Instagram. De VivaBem.', 'news-clipping-image')}</article><p class="pleasure-note"><span aria-hidden="true">✨</span> El ejercicio ligero funciona mejor cuando lo disfrutas. <span aria-hidden="true">✨</span></p>${nextButton()}`;
 }
 function loaderScreen(step) {
   return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan, paso a paso</span><strong id="loading-percent" aria-live="off">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><div class="loading-list" aria-live="polite">${LOADING_ITEMS.map(([heading, detail], i) => `<div class="loading-item ${i === 0 ? 'active' : ''}"><span class="loading-check" aria-hidden="true"></span><div><strong>${heading}</strong><small>${detail}</small></div></div>`).join('')}</div>`;

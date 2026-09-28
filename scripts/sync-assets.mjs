@@ -28,7 +28,7 @@ export async function syncAssets() {
     before: ['antesedepoisetapafinal', 'pergunta3(3)'],
     after: ['antesedepoisetapafinal(2)', 'pergunta3'],
     guarantee: ['garantia7dias', 'selogarantia', 'garantia'],
-    proof: ['provasocial', 'etapa10', 'zumba-e-saude-das-mulheres-3'],
+    proof: ['etapa09-es', 'etapa09', 'provasocial', 'etapa10'],
     logo: ['logo', 'dancefit-logo'],
   };
   for (const [key, candidates] of Object.entries(aliases)) {
