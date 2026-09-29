@@ -7,7 +7,6 @@ const app = document.querySelector('#app');
 const back = document.querySelector('#back');
 const progress = document.querySelector('#progress');
 const fill = document.querySelector('#progress-fill');
-const stepLabel = document.querySelector('#step-label');
 const assets = window.DANCEFIT_ASSETS || {};
 const STORE = 'dancefit-latam-session-v1';
 const TTL = 24 * 60 * 60 * 1000;
@@ -164,7 +163,7 @@ function offerScreen() {
   return `<div class="heading"><h1>¡Accede ya a tu plan de ${info.goals.includes('weight') && info.direction === 'lose' ? 'adelgazamiento con baile' : 'baile personalizado'}${name ? `, ${name}` : ''}!</h1><p>${info.path} · ${info.level.toLowerCase()}</p></div>
     <div class="before-after"><figure class="body-figure">${asset(info.beforeImage, 'Representación de la opción corporal que elegiste')}<figcaption>Ahora</figcaption></figure><span class="transform-arrow" aria-hidden="true">›</span><figure class="body-figure">${asset(info.afterImage, 'Representación del objetivo corporal que elegiste')}<figcaption>Tu objetivo</figcaption></figure></div>
     <ul class="benefits"><li>Tu programa de ${CONFIG.programDays} días: ${info.goal.toLowerCase()}.</li><li>Empieza con ${info.startMinutes} minutos por sesión, ${info.days} días por semana, dentro de los ${info.minutes} minutos que tienes disponibles.</li><li>${info.rhythm}. Áreas de interés: ${info.focus.toLowerCase()}.</li><li>${info.needsReview ? 'Propuesta pendiente de revisar tus molestias antes de iniciar.' : 'Una progresión de cuatro semanas a tu ritmo.'}</li><li>Más de 300 entrenamientos de baile y programas especiales.</li><li>Practica en cualquier lugar y sin equipo.</li></ul>
-    ${timer}<div class="price-card"><div class="price-top"><span class="payment-label">PAGO ÚNICO</span><div class="price">${compare}<strong>${priceLabel(CONFIG.price, CONFIG.currency)}</strong><small>DÓLARES ESTADOUNIDENSES</small></div></div>${buyButton()}<p class="secure-payment">${lockIcon} Pago 100% seguro</p></div>
+    ${timer}<div class="price-card"><div class="price-top"><span class="payment-label">PAGO ÚNICO</span><div class="price">${compare}<strong>${priceLabel(CONFIG.price, CONFIG.currency)}</strong></div></div>${buyButton()}<p class="secure-payment">${lockIcon} Pago 100% seguro</p></div>
     <section class="access-card"><h2>¿Cómo recibiré mi acceso a todo esto?</h2><p>Después de confirmar tu compra, recibirás un correo electrónico con tu acceso a nuestra Área de Alumnas. Dentro encontrarás todas las clases organizadas, una para cada día de la semana: solo tienes que darle play y empezar.</p></section>
     <section class="guarantee">${asset('guarantee', 'Garantía de devolución de 7 días')}<h2>Garantía de devolución del 100% de tu dinero</h2><p>Confiamos en la calidad de nuestro plan. Si en ${CONFIG.guaranteeDays} días no sientes la diferencia, solo tienes que avisarnos y te devolvemos cada centavo.</p></section>
     <section><h2 class="faq-heading">Lo que la gente suele preguntar</h2><div class="faq">${FAQ.map(([question, answer], i) => `<details ${i === 0 ? 'open' : ''}><summary>${question}</summary><p>${answer}</p></details>`).join('')}</div></section>${buyButton()}`;
@@ -177,7 +176,6 @@ function render() {
   const percent = Math.round((state.index + 1) / STEPS.length * 100);
   fill.style.width = `${percent}%`;
   progress.setAttribute('aria-valuenow', String(percent));
-  stepLabel.textContent = step.question ? `${step.question} / 17` : '';
   const renderers = { age: ageScreen, choice: choicesScreen, welcome: welcomeScreen, proof: proofScreen, loading: loaderScreen, measure: measureScreen, summary: summaryScreen, name: nameScreen, testimonials: testimonialsScreen, projection: projectionScreen, plan: planScreen, offer: offerScreen };
   app.innerHTML = `<section class="screen" data-step="${step.id}">${renderers[step.type](step)}</section>`;
   document.title = step.type === 'offer' ? 'Tu plan DanceFit — US$ 9,90' : 'DanceFit — Tu plan de baile';
