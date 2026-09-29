@@ -100,7 +100,7 @@ try {
   assert.match(await page.locator('.target-title').innerText(), /60 kg/);
   await next();
   await assertScreen('plan');
-  assert.match(await page.locator('.plan-facts').innerText(), /30 min/);
+  assert.match(await page.locator('.plan-facts').innerText(), /min por sesión/);
   assert.match(await page.locator('.plan-facts').innerText(), /Intermedia/);
   await next();
   await assertScreen('offer');

@@ -1,5 +1,5 @@
 import { CONFIG } from './config.js';
-import { STEPS, LOADING_ITEMS, TESTIMONIALS, FAQ } from './content.js';
+import { STEPS, LOADING_ITEMS, PLAN_BENEFITS, FAQ } from './content.js';
 import { toggleSelection, toDisplay, toMetric, bmi, profile, priceLabel, escapeHtml as esc, safeCheckoutUrl } from './logic.js';
 import { resolveDeadline, remainingSeconds } from './offer-clock.js';
 
@@ -97,7 +97,7 @@ function choicesScreen(step) {
 }
 function welcomeScreen(step) { return `${title(step)}${asset('welcome', 'Mujeres compartiendo un momento juntas', 'welcome-image')}<p class="welcome-copy">Vamos a crear tu plan personalizado.</p>${nextButton()}`; }
 function proofScreen(step) {
-  return `${title(step)}<article class="news-clipping">${asset('proof', 'Madre e hija adelgazan 83 kg con una clase de baile que quema 800 calorías. Jaime y Jean practican una modalidad que combina baile con ejercicios de fuerza. Imagen: Reproducción de Instagram. De VivaBem.', 'news-clipping-image')}</article><p class="pleasure-note"><span aria-hidden="true">✨</span> El ejercicio ligero funciona mejor cuando lo disfrutas. <span aria-hidden="true">✨</span></p>${nextButton()}`;
+  return `${title(step)}<article class="dance-editorial"><p class="editorial-eyebrow">BAILA A TU RITMO</p><h2>Tu música favorita. Un momento para ti.</h2><p>Cumbia, merengue y bachata para darle movimiento a tu día, desde la comodidad de tu hogar.</p><ul><li>Pasos para tu nivel de experiencia.</li><li>Sesiones que se adaptan al tiempo que tienes.</li><li>Una rutina que puedes incorporar poco a poco.</li></ul></article><p class="pleasure-note">Empieza con una canción y encuentra tu ritmo. ✨</p>${nextButton()}`;
 }
 function loaderScreen(step) {
   return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan, paso a paso</span><strong id="loading-percent" aria-live="off">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><div class="loading-list" aria-live="polite">${LOADING_ITEMS.map(([heading, detail], i) => `<div class="loading-item ${i === 0 ? 'active' : ''}"><span class="loading-check" aria-hidden="true"></span><div><strong>${heading}</strong><small>${detail}</small></div></div>`).join('')}</div>`;
@@ -126,8 +126,9 @@ function nameScreen(step) {
   return `${title(step)}<form class="name-form"><input id="name-field" class="name-field" name="given-name" type="text" autocomplete="given-name" placeholder="Escribe tu nombre…" value="${esc(state.answers.name || '')}" minlength="2" maxlength="60" aria-label="Tu nombre" required>${nextButton('Continuar', !canContinue(step))}</form>`;
 }
 function testimonialsScreen(step) {
-  return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan está casi listo</span><strong id="loading-percent">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><h2 class="testimonial-title">Durante los últimos 30 días, las usuarias del plan perdieron 10 kg. 😍</h2><div class="testimonials">${TESTIMONIALS.map(t => `<article class="testimonial"><div class="stars" aria-label="5 de 5 estrellas">★★★★★</div><strong>${t.name}</strong><small>${t.handle}</small><p>${t.text}</p></article>`).join('')}</div>`;
+  return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan está casi listo</span><strong id="loading-percent">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><h2 class="testimonial-title">Un espacio para moverte y disfrutar</h2><div class="testimonials">${PLAN_BENEFITS.map(t => `<article class="testimonial"><strong>${t.title}</strong><p>${t.text}</p></article>`).join('')}</div>`;
 }
+
 function projectionScreen(step) {
   const info = profile(state.answers);
   const current = Number(state.answers.weight) || 70;
@@ -150,14 +151,13 @@ function planScreen() {
   const name = esc(state.answers.name?.trim() || 'ti');
   const info = profile(state.answers);
   const rows = [
-    ['Tu ruta', info.path], ['Tu punto de partida', `${info.startMinutes} min por sesión · ${info.days} días por semana`],
-    ['Tiempo que tienes disponible', `Hasta ${info.minutes} min por sesión`], ['Nivel de baile', info.level], ['Ritmos', info.rhythm],
-    ['Tus objetivos', info.goal], ['Áreas que elegiste', info.focus], ['Tu motivación', info.event], ['Lo que buscas conseguir', info.result],
+    [`Tu punto de partida, ${name}`, info.story],
+    ['Tu rutina ideal', `${info.startMinutes} min por sesión · ${info.days} días por semana`],
+    ['Nivel', info.level],
+    ['Objetivo', info.goal],
+    ['Lo que buscas conseguir', info.result],
   ];
-  return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Esta es tu <strong>propuesta personalizada</strong> de ${CONFIG.programDays} días, basada en tus respuestas.</p><dl class="plan-facts">${rows.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
-    <section class="plan-reasons"><h2>Por qué esta ruta es para ti</h2><ul>${info.reasons.map(reason => `<li>${reason}</li>`).join('')}</ul></section>
-    <section class="weekly-plan"><h2>Tu ruta de 28 días</h2><p class="section-intro">Una organización sugerida. Puedes repetir una semana antes de avanzar.</p>${info.weeks.map(week => `<details class="week-card" ${week.week === 1 ? 'open' : ''}><summary><span>Semana ${week.week}</span><strong>${week.theme}</strong><small>${week.sessions} sesiones · ${week.minutes} min</small></summary><div><p>${week.days}</p><p>${week.rhythm}</p><p>Tu interés: ${week.focus}</p><p class="week-note">${week.note}</p></div></details>`).join('')}</section>
-    <details class="answer-recap"><summary>Tus preferencias y medidas</summary><dl><div><dt>Grupo de edad</dt><dd>${info.ageGroup}</dd></div><div><dt>Tu percepción corporal</dt><dd>${info.body} → ${info.dream}</dd></div><div><dt>Tu historia</dt><dd>${info.history}</dd></div><div><dt>Lo que nos contaste</dt><dd>${info.story}</dd></div><div><dt>Tus medidas</dt><dd>${Number(state.answers.height) || '—'} cm · ${info.current ?? '—'} kg</dd></div><div><dt>Meta declarada</dt><dd>${info.target ?? '—'} kg</dd></div></dl><p>${info.weightNote}</p></details><p class="medical-note">${info.care}</p>${nextButton('Ver mi plan completo')}`;
+  return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Creamos un <strong>plan personalizado</strong> basado en tus respuestas.</p><dl class="plan-facts">${rows.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${nextButton('Ver mi plan completo')}`;
 }
 function buyButton() { const expired = remainingSeconds(state.offerDeadline) === 0; return `<button class="primary purchase" data-action="checkout" ${expired ? 'disabled' : ''}>${expired ? 'Oferta finalizada' : `Quiero empezar ahora ${arrowIcon}`}</button>`; }
 function offerScreen() {

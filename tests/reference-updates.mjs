@@ -12,7 +12,7 @@ try {
     if (id === 'history') assert.deepEqual(await page.locator('.choice-icon').allTextContents(), ['🤔','😅','🥹','😌','❌']);
     if (id === 'weightStory') assert.equal(await page.locator('.mini-curve linearGradient').count(), 4);
     if (id === 'proof') {
-      assert.match(await page.locator('.news-clipping-image').getAttribute('src'), /etapa09-es/);
+      assert.equal(await page.locator('.news-clipping-image').count(),0); assert.match(await page.locator('.dance-editorial').innerText(),/Cumbia, merengue y bachata/);
       assert.equal(await page.locator('.editorial-image').count(), 0);
     }
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,id);

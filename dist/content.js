@@ -3,7 +3,7 @@ const option = (value, label, extra = {}) => ({ value, label, ...extra });
 export const STEPS = [
   { id: 'age', type: 'age', question: 1, title: 'Tu plan de <em>adelgazamiento bailando</em> comienza aquí', subtitle: 'Responde rápidamente y recibe tu plan ideal', options: [option('40-49', '40 a 49 años', { image: 'pergunta1' }), option('50+', '50+ años', { image: 'pergunta1(2)' })] },
   { id: 'goals', type: 'choice', question: 2, multiple: true, title: '¿Cuál es tu objetivo principal?', subtitle: '¡Vamos a empezar tu viaje con tus objetivos!', options: [option('weight', 'Perder peso', { image: 'pergunta2' }), option('fitness', 'Mantenerme en forma', { image: 'pergunta2(2)' }), option('dance', 'Aprender a bailar', { image: 'pergunta2(3)' })] },
-  { id: 'body', type: 'choice', question: 3, title: '¿Cómo describirías tu físico actual?', options: [option('standard', 'Estándar', { image: 'pergunta3' }), option('soft', 'Flácida', { image: 'pergunta3(2)' }), option('extra', 'EXTRA', { image: 'pergunta3(3)' })] },
+  { id: 'body', type: 'choice', question: 3, title: '¿Cómo describirías tu físico actual?', options: [option('standard', 'Estándar', { image: 'pergunta3' }), option('soft', 'Flácida', { image: 'pergunta3(2)' }), option('extra', 'Con más volumen', { image: 'pergunta3(3)' })] },
   { id: 'dream', type: 'choice', question: 4, title: '¿Cómo sería el cuerpo de tus sueños?', options: [option('fit', 'Tonificado', { image: 'pergunta3' }), option('defined', 'Definido', { image: 'pergunta4(definido)' }), option('curves', 'Con curvas', { image: 'pergunta3(2)' }), option('slimmer', 'Un poco más delgada que antes', { image: 'pergunta3(3)' })] },
   { id: 'welcome', type: 'welcome', title: '¡Estás en el lugar correcto!' },
   { id: 'focus', type: 'choice', question: 5, multiple: true, title: '¿Qué partes de tu cuerpo te gustaría mejorar?', options: [option('arms', 'Brazos tonificados'), option('belly', 'Vientre plano'), option('glutes', 'Glúteos redondos'), option('legs', 'Piernas'), option('all', 'Adelgazamiento total')] },
@@ -13,7 +13,7 @@ export const STEPS = [
   { id: 'proof', type: 'proof', title: 'No tienes que <em>sufrir</em> para adelgazar' },
   { id: 'activity', type: 'choice', question: 9, title: '¿Con qué frecuencia haces ejercicio?', subtitle: 'El programa de entrenamiento se personalizará de acuerdo con tu condición física.', options: [option('none', 'No hago ejercicio', { level: 1 }), option('monthly', '1–2 veces al mes', { level: 2 }), option('weekly', '1–2 veces a la semana', { level: 3 }), option('often', '3–4 veces a la semana', { level: 4 }), option('daily', 'Casi todos los días', { level: 5 })] },
   { id: 'duration', type: 'choice', question: 10, title: '¿Cuánto tiempo quieres que duren tus clases?', subtitle: 'Elegiremos clases ligeras que se adapten a tu día.', options: [option('10', '0–10 minutos', { detail: 'Solo tengo unos minutos', icon: '⏰' }), option('15', '11–15 minutos', { detail: 'Puedo hacerlo rápido', icon: '⏰' }), option('30', '16–30 minutos', { detail: 'Puedo dedicar un poco más', icon: '⏰' }), option('auto', 'Deja que DANCEFIT decida', { icon: '🎵' })] },
-  { id: 'rhythm', type: 'choice', question: 11, title: '¿Qué ritmo te animaría más?', subtitle: 'Tu plan se adaptará a los ritmos que más te gusten. 💃', options: [option('energetic', 'BAILES ANIMADOS', { detail: 'FITDANCE / ZUMBA', image: 'ritmo1' }), option('light', 'RITMOS LIGEROS Y DIVERTIDOS', { detail: 'SERTANEJO / FORRÓ', image: 'ritmo2' }), option('auto', 'QUIERO QUE DANCEFIT ELIJA POR MÍ', { detail: '✨ Recomendado para ti', icon: '🎵' })] },
+  { id: 'rhythm', type: 'choice', question: 11, title: '¿Qué ritmo te animaría más?', subtitle: 'Tu plan se adaptará a los ritmos que más te gusten. 💃', options: [option('energetic', 'BAILES ANIMADOS', { detail: 'BAILE FITNESS', image: 'ritmo1' }), option('light', 'RITMOS LIGEROS Y DIVERTIDOS', { detail: 'CUMBIA / MERENGUE / BACHATA', image: 'ritmo2' }), option('auto', 'QUIERO QUE DANCEFIT ELIJA POR MÍ', { detail: '✨ Recomendado para ti', icon: '🎵' })] },
   { id: 'loading1', type: 'loading', title: 'Creando tu <em>plan de baile…</em>', subtitle: 'Estamos personalizando todo según tus preferencias y objetivos. ♡' },
   { id: 'event', type: 'choice', question: 12, confirm: true, title: '¿Tienes algún evento importante próximamente?', subtitle: 'Tener algo emocionante esperándote te hará sentir más motivada.', options: [option('holiday', 'Vacaciones', { icon: '✈️' }), option('wedding', 'Boda', { icon: '🤵' }), option('sport', 'Evento deportivo', { icon: '🏆' }), option('beach', 'Viaje a la playa', { icon: '🏝️' }), option('reunion', 'Reunión', { icon: '🥳' }), option('family', 'Ocasión familiar', { icon: '👨‍👩‍👧' }), option('other', 'Otro', { icon: '🤔' }), option('none', 'No', { icon: '🤷‍♀️' })] },
   { id: 'limitations', type: 'choice', question: 13, multiple: true, title: '¿Tienes molestias en alguna de estas zonas?', subtitle: 'Podemos filtrar entrenamientos ligeros para ti.', options: [option('back', 'Tengo la espalda sensible'), option('knees', 'Tengo las rodillas sensibles'), option('arms', 'Tengo los brazos sensibles'), option('shoulder', 'Tengo un hombro sensible'), option('none', 'Ninguna de las anteriores')] },
@@ -36,9 +36,9 @@ export const LOADING_ITEMS = [
   ['Finalizando tu plan DanceFit', '¡Casi listo!'],
 ];
 
-export const TESTIMONIALS = [
-  { name: 'Lucía Fernández', handle: 'Ejemplo ilustrativo · nombre ficticio', text: 'No era solo por el peso, era por el desánimo… Hoy tengo mucha más energía y ánimo.' },
-  { name: 'Carmen García', handle: 'Ejemplo ilustrativo · nombre ficticio', text: '¡Empecé pensando que no iba a poder y en pocas semanas ya sentía la diferencia en mi cuerpo y en mi estado de ánimo!' },
+export const PLAN_BENEFITS = [
+  { title: 'A tu ritmo', text: 'Empieza con sesiones cortas y pasos que se adapten a tu experiencia.' },
+  { title: 'Con música que te gusta', text: 'Disfruta de cumbia, merengue y bachata desde la comodidad de tu hogar.' },
 ];
 
 export const FAQ = [

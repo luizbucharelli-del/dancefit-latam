@@ -10,7 +10,7 @@ async function seed(answers,index=23){await page.evaluate(({answers,index})=>ses
 try{
   await page.clock.install();
   await page.goto('http://127.0.0.1:4173'); await seed(base); await page.evaluate(()=>history.replaceState(null,'','#plan')); await page.reload();
-  await page.locator('.weekly-plan').waitFor(); const beginner=await page.locator('.plan-facts').innerText();
+  await page.locator('.plan-facts').waitFor(); assert.equal(await page.locator('.plan-facts > div').count(),5); assert.equal(await page.locator('.weekly-plan').count(),0); const beginner=await page.locator('.plan-facts').innerText();
   assert.match(beginner,/5 min/); assert.match(beginner,/Principiante/);
   await page.screenshot({path:'test-results/personal-plan-mobile.png',fullPage:true});
   await seed({...base,experience:'advanced',activity:'daily',duration:'30',rhythm:'energetic',goals:['dance','fitness'],weight:65,target:65}); await page.reload();
@@ -30,6 +30,6 @@ try{
   await page.setViewportSize({width:320,height:740});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
   await page.screenshot({path:'test-results/offer-expired.png',fullPage:true});
   await seed(base,21);await page.evaluate(()=>history.replaceState(null,'','#loading2'));await page.reload();
-  assert.match(await page.locator('.testimonials').innerText(),/Lucía Fernández/);assert.match(await page.locator('.testimonials').innerText(),/Carmen García/);assert.match(await page.locator('.testimonials').innerText(),/nombre ficticio/);
-  assert.deepEqual(errors,[]); console.log('PASS: distinct profiles, four weeks, names, persistence, real expiry, reload/back, mobile layout');
+  assert.match(await page.locator('.testimonials').innerText(),/A tu ritmo/); assert.doesNotMatch(await page.locator('.testimonials').innerText(),/ficticio|Lucía|Carmen/); assert.equal(await page.locator('.stars').count(),0);
+  assert.deepEqual(errors,[]); console.log('PASS: distinct profiles, five compact cards, benefit cards, persistence, real expiry, reload/back, mobile layout');
 }finally{await browser.close();}

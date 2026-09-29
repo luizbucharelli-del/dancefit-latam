@@ -29,14 +29,14 @@ export function profile(answers) {
   const minutes = ['10', '15', '30'].includes(answers.duration) ? Number(answers.duration) : activity < 2 || needsReview ? 10 : experience === 2 && activity >= 3 ? 30 : 15;
   const startMinutes = Math.min(minutes, needsReview || activity === 0 ? 5 : activity < 2 || experience === 0 || restart ? 10 : minutes);
   const days = needsReview ? 2 : Math.min(experience === 0 ? 3 : 4, [2, 2, 3, 4, 4][activity]);
-  const body = { standard: 'Estándar', soft: 'Flácida', extra: 'EXTRA' }[answers.body] || 'Estándar';
+  const body = { standard: 'Estándar', soft: 'Flácida', extra: 'Con más volumen' }[answers.body] || 'Estándar';
   const story = { easy: 'Subes de peso con facilidad', varies: 'Tu peso varía bastante', hard: 'Te cuesta adelgazar', unsure: 'Todavía no estás segura' }[answers.weightStory] || 'Según tus respuestas';
   const goals = ['weight', 'fitness', 'dance'].filter(key => Array.isArray(answers.goals) && answers.goals.includes(key));
   const goalLabels = { weight: 'Perder peso a tu ritmo', fitness: 'Mantenerte en forma', dance: 'Aprender a bailar' };
   const goal = goals.map(key => goalLabels[key]).join(' + ') || 'Crear una rutina de baile';
   const result = goals.map(key => ({ weight: 'Acompañar tu objetivo de peso', fitness: 'Mejorar tu constancia', dance: 'Ganar confianza con nuevos pasos' })[key]).join(' + ') || 'Crear un hábito que disfrutes';
   const rhythmKey = ['energetic', 'light'].includes(answers.rhythm) ? answers.rhythm : activity < 2 || experience === 0 || needsReview ? 'light' : 'energetic';
-  const rhythm = rhythmKey === 'light' ? 'Ritmos ligeros: sertanejo / forró' : 'Bailes animados: FitDance / Zumba';
+  const rhythm = rhythmKey === 'light' ? 'Ritmos latinos: cumbia / merengue / bachata' : 'Baile fitness: cumbia / merengue / bachata';
   const focusLabels = { arms: 'Brazos', belly: 'Zona abdominal', glutes: 'Glúteos', legs: 'Piernas', all: 'Todo el cuerpo' };
   const focusKeys = Object.keys(focusLabels).filter(key => Array.isArray(answers.focus) && answers.focus.includes(key));
   const focus = focusKeys.length ? focusKeys.map(key => focusLabels[key]).join(' · ') : 'Todo el cuerpo';
