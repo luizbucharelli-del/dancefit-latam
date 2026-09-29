@@ -7,7 +7,6 @@ export const CONFIG = Object.freeze({
   compareAtPrice: null,
   guaranteeDays: 7,
   programDays: 28,
-  // Una única ventana por navegador para esta oferta. No reinicia al recargar.
-  offerId: 'dancefit-usd990-v1',
-  offerDurationMinutes: 10,
+  // Temporizador orientativo: no limita la compra.
+  reviewDurationSeconds: 8 * 60 + 19,
 });

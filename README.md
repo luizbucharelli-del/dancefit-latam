@@ -20,7 +20,7 @@ Enquanto o endereço não for informado, os dois botões de compra abrem uma men
 
 `compareAtPrice` está nulo porque a copy trouxe US$ 9,90 como preço anterior e atual. Um preço riscado só aparece quando configurado e maior que o preço de venda.
 
-O prazo individual de 10 minutos começa na primeira abertura da oferta. `offerId` identifica a mesma campanha e `offerDurationMinutes` define sua duração. O vencimento absoluto fica em localStorage e sessionStorage: voltar, recarregar e refazer o quiz não renovam o prazo. Ao zerar, os dois botões ficam desabilitados; o clique também verifica o vencimento. Sem armazenamento disponível, a oferta fica indisponível. A proteção atual é por navegador: limpar dados, alterar relógio ou trocar de dispositivo não são impedidos. A expiração no processador de pagamento exige validação no servidor/checkout, ainda não integrado.
+O contador inicia em 08:19 ao abrir a etapa final. É identificado como tempo orientativo para revisar o plano, sem prazo comercial. Ao chegar a zero, ambos os botões continuam ativos. `reviewDurationSeconds` configura a duração. A configuração do checkout real permanece pendente.
 
 ## Personalização
 
@@ -109,3 +109,6 @@ Prompt final da edição:
 ## Revisão cultural — 29/09/2026
 
 O resumo do plano tem somente cinco cartões personalizados, seguindo a referência. A lógica de personalização continua ativa na rotina, nível, objetivos e oferta. Ritmos: cumbia, merengue e bachata; a opção animada usa “baile fitness”. “EXTRA” foi substituído por “Con más volumen”. O recorte VivaBem não é mais exibido: a etapa contém argumento próprio, sem atribuição de terceiros. Os antigos exemplos de depoimentos deram lugar a cartões de benefícios, sem pessoas, estrelas ou alegações de perda de peso. O texto publicitário revisado está em `../copy anuncio.txt`.
+
+
+A etapa da notícia voltou a exibir o recorte em espanhol, agora com a imagem `etapa09-sem-fonte.png`, sem o crédito VivaBem. O contador não anuncia expiração de oferta e não bloqueia a compra.

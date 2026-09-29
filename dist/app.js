@@ -1,7 +1,7 @@
 import { CONFIG } from './config.js';
 import { STEPS, LOADING_ITEMS, PLAN_BENEFITS, FAQ } from './content.js';
 import { toggleSelection, toDisplay, toMetric, bmi, profile, priceLabel, escapeHtml as esc, safeCheckoutUrl } from './logic.js';
-import { resolveDeadline, remainingSeconds } from './offer-clock.js';
+import { remainingSeconds } from './offer-clock.js';
 
 const app = document.querySelector('#app');
 const back = document.querySelector('#back');
@@ -11,14 +11,7 @@ const stepLabel = document.querySelector('#step-label');
 const assets = window.DANCEFIT_ASSETS || {};
 const STORE = 'dancefit-latam-session-v1';
 const TTL = 24 * 60 * 60 * 1000;
-const OFFER_KEY = `dancefit-offer-deadline:${CONFIG.offerId}`;
-function storage(type) { try { return window[type]; } catch { return null; } }
-function offerDeadline() {
-  const deadline = resolveDeadline({ stores: [storage('localStorage'), storage('sessionStorage')], key: OFFER_KEY, now: Date.now(), durationMs: CONFIG.offerDurationMinutes * 60000, remembered: state.offerDeadline });
-  state.offerDeadline = deadline;
-  persist();
-  return deadline;
-}
+let reviewDeadline = null;
 const checkIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
 const lockIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4m-4 5v3"/></svg>';
 const arrowIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
@@ -97,7 +90,7 @@ function choicesScreen(step) {
 }
 function welcomeScreen(step) { return `${title(step)}${asset('welcome', 'Mujeres compartiendo un momento juntas', 'welcome-image')}<p class="welcome-copy">Vamos a crear tu plan personalizado.</p>${nextButton()}`; }
 function proofScreen(step) {
-  return `${title(step)}<article class="dance-editorial"><p class="editorial-eyebrow">BAILA A TU RITMO</p><h2>Tu música favorita. Un momento para ti.</h2><p>Cumbia, merengue y bachata para darle movimiento a tu día, desde la comodidad de tu hogar.</p><ul><li>Pasos para tu nivel de experiencia.</li><li>Sesiones que se adaptan al tiempo que tienes.</li><li>Una rutina que puedes incorporar poco a poco.</li></ul></article><p class="pleasure-note">Empieza con una canción y encuentra tu ritmo. ✨</p>${nextButton()}`;
+  return `${title(step)}<article class="news-clipping">${asset('proof', 'Recorte traducido al español sobre una madre y su hija que practican baile.', 'news-clipping-image')}</article><p class="pleasure-note">Encuentra una forma de moverte que disfrutes. ✨</p>${nextButton()}`;
 }
 function loaderScreen(step) {
   return `${title(step)}<div class="loader-top"><div class="loader-meter"><span>Tu plan, paso a paso</span><strong id="loading-percent" aria-live="off">0%</strong></div><div class="loader-bar" role="progressbar" aria-label="Creando tu plan" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"><div id="loading-fill"></div></div></div><div class="loading-list" aria-live="polite">${LOADING_ITEMS.map(([heading, detail], i) => `<div class="loading-item ${i === 0 ? 'active' : ''}"><span class="loading-check" aria-hidden="true"></span><div><strong>${heading}</strong><small>${detail}</small></div></div>`).join('')}</div>`;
@@ -159,14 +152,15 @@ function planScreen() {
   ];
   return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Creamos un <strong>plan personalizado</strong> basado en tus respuestas.</p><dl class="plan-facts">${rows.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${nextButton('Ver mi plan completo')}`;
 }
-function buyButton() { const expired = remainingSeconds(state.offerDeadline) === 0; return `<button class="primary purchase" data-action="checkout" ${expired ? 'disabled' : ''}>${expired ? 'Oferta finalizada' : `Quiero empezar ahora ${arrowIcon}`}</button>`; }
+function buyButton() { return `<button class="primary purchase" data-action="checkout">Quiero empezar ahora ${arrowIcon}</button>`; }
 function offerScreen() {
   const info = profile(state.answers);
-  const deadline = offerDeadline();
+  reviewDeadline = Date.now() + CONFIG.reviewDurationSeconds * 1000;
+  const deadline = reviewDeadline;
   const seconds = remainingSeconds(deadline);
   const name = esc(state.answers.name?.trim() || '');
   const compare = CONFIG.compareAtPrice && CONFIG.compareAtPrice > CONFIG.price ? `<del>Antes ${priceLabel(CONFIG.compareAtPrice, CONFIG.currency)}</del>` : '';
-  const timer = `<div class="urgency-panel"><p class="offer-timer-label">${seconds ? 'Tu oferta personal termina en' : 'El plazo de tu oferta terminó'}</p><div class="offer-timer" role="timer" aria-label="Tiempo restante de tu oferta" aria-live="off"><div><strong id="timer-minutes">${String(Math.floor(seconds/60)).padStart(2,'0')}</strong><small>MIN</small></div><span>:</span><div><strong id="timer-seconds">${String(seconds%60).padStart(2,'0')}</strong><small>SEG</small></div></div><p id="offer-status" role="status">${seconds ? 'Tienes 10 minutos desde la primera vez que abres esta oferta.' : deadline === null ? 'La oferta no está disponible en este momento.' : 'Esta oferta ya no está disponible. Tu plan sigue guardado en esta sesión.'}</p></div>`;
+  const timer = `<div class="urgency-panel"><p class="offer-timer-label">Un momento para revisar tu plan</p><div class="offer-timer" role="timer" aria-label="Tiempo sugerido para revisar tu plan" aria-live="off"><div><strong id="timer-minutes">${String(Math.floor(seconds/60)).padStart(2,'0')}</strong><small>MIN</small></div><span>:</span><div><strong id="timer-seconds">${String(seconds%60).padStart(2,'0')}</strong><small>SEG</small></div></div><p id="offer-status" role="status">Tiempo orientativo. Tu acceso a la compra no depende del contador.</p></div>`;
   return `<div class="heading"><h1>¡Accede ya a tu plan de ${info.goals.includes('weight') && info.direction === 'lose' ? 'adelgazamiento con baile' : 'baile personalizado'}${name ? `, ${name}` : ''}!</h1><p>${info.path} · ${info.level.toLowerCase()}</p></div>
     <div class="before-after"><figure class="body-figure">${asset(info.beforeImage, 'Representación de la opción corporal que elegiste')}<figcaption>Ahora</figcaption></figure><span class="transform-arrow" aria-hidden="true">›</span><figure class="body-figure">${asset(info.afterImage, 'Representación del objetivo corporal que elegiste')}<figcaption>Tu objetivo</figcaption></figure></div>
     <ul class="benefits"><li>Tu programa de ${CONFIG.programDays} días: ${info.goal.toLowerCase()}.</li><li>Empieza con ${info.startMinutes} minutos por sesión, ${info.days} días por semana, dentro de los ${info.minutes} minutos que tienes disponibles.</li><li>${info.rhythm}. Áreas de interés: ${info.focus.toLowerCase()}.</li><li>${info.needsReview ? 'Propuesta pendiente de revisar tus molestias antes de iniciar.' : 'Una progresión de cuatro semanas a tu ritmo.'}</li><li>Más de 300 entrenamientos de baile y programas especiales.</li><li>Practica en cualquier lugar y sin equipo.</li></ul>
@@ -213,22 +207,19 @@ function startLoading(duration) {
 }
 function startOfferTimer() {
   const update = () => {
-    const total = remainingSeconds(state.offerDeadline);
+    const total = remainingSeconds(reviewDeadline);
     const min = document.querySelector('#timer-minutes');
     if (!min) return;
     min.textContent = String(Math.floor(total / 60)).padStart(2, '0');
     document.querySelector('#timer-seconds').textContent = String(total % 60).padStart(2, '0');
-    if (total === 0) expireOffer();
+    if (total === 0) finishReviewTimer();
     else later(update, 250);
   };
   update();
 }
-function expireOffer() {
-  app.querySelectorAll('[data-action=checkout]').forEach(button => { button.disabled = true; button.textContent = 'Oferta finalizada'; });
-  const label = app.querySelector('.offer-timer-label');
-  if (label) label.textContent = 'El plazo de tu oferta terminó';
+function finishReviewTimer() {
   const status = app.querySelector('#offer-status');
-  if (status) status.textContent = state.offerDeadline === null ? 'La oferta no está disponible en este momento.' : 'Esta oferta ya no está disponible. Tu plan sigue guardado en esta sesión.';
+  if (status) status.textContent = 'Puedes seguir revisando tu plan o continuar con la compra cuando quieras.';
 }
 
 app.addEventListener('click', event => {
@@ -254,7 +245,6 @@ app.addEventListener('click', event => {
   }
   if (event.target.closest('[data-action=next]')) { event.preventDefault(); next(); }
   if (event.target.closest('[data-action=checkout]')) {
-    if (remainingSeconds(offerDeadline()) === 0) { expireOffer(); return; }
     const url = safeCheckoutUrl(CONFIG.checkoutUrl, location.search);
     document.dispatchEvent(new CustomEvent('dancefit:checkout', { detail: { configured: Boolean(url), price: CONFIG.price, currency: CONFIG.currency } }));
     if (url) location.assign(url);
@@ -297,8 +287,7 @@ window.addEventListener('popstate', () => {
   const index = STEPS.findIndex(step => `#${step.id}` === location.hash);
   go(index >= 0 && index <= state.maxVisited ? index : 0, true);
 });
-window.addEventListener('storage', event => { if (event.key === OFFER_KEY && STEPS[state.index].type === 'offer') render(); });
-document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && STEPS[state.index].type === 'offer') { stopTimers(); offerDeadline(); startOfferTimer(); } });
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && STEPS[state.index].type === 'offer') { stopTimers(); startOfferTimer(); } });
 document.querySelector('#year').textContent = new Date().getFullYear();
 if (assets.logo) document.querySelector('.wordmark').innerHTML = asset('logo', 'DanceFit', 'brand-image');
 const initialHash = STEPS.findIndex(step => `#${step.id}` === location.hash);
