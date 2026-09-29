@@ -83,7 +83,8 @@ export function safeCheckoutUrl(value, search = '') {
     const url = new URL(value);
     if (url.protocol !== 'https:') return null;
     const params = new URLSearchParams(search);
-    for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term']) {
+    // UTMs + parâmetros de atribuição da Utmify (src, sck, xcod) e do Meta (fbclid).
+    for (const key of ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id', 'src', 'sck', 'xcod', 'fbclid']) {
       if (params.has(key)) url.searchParams.set(key, params.get(key).slice(0, 200));
     }
     return url.href;

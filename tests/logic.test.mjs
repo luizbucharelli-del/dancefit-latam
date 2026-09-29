@@ -37,6 +37,11 @@ test('Checkout aceita HTTPS e atribuição UTM, sem dados pessoais', () => {
   assert.equal(result.searchParams.get('utm_source'), 'instagram');
   assert.equal(result.searchParams.has('name'), false);
   assert.equal(result.searchParams.has('weight'), false);
+  const tracked = new URL(safeCheckoutUrl('https://example.com/checkout', '?utm_campaign=ads&src=fb&sck=abc&fbclid=xyz&email=a@b.com'));
+  assert.equal(tracked.searchParams.get('src'), 'fb');
+  assert.equal(tracked.searchParams.get('sck'), 'abc');
+  assert.equal(tracked.searchParams.get('fbclid'), 'xyz');
+  assert.equal(tracked.searchParams.has('email'), false);
 });
 
 test('Nome é escapado e preço especifica dólar com duas casas decimais', () => {
