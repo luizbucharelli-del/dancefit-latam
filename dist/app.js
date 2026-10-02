@@ -58,7 +58,9 @@ function go(index, replace = false) {
   document.dispatchEvent(new CustomEvent('dancefit:step', { detail: { step: STEPS[index].id, index: index + 1 } }));
 }
 function next() {
-  if (!canContinue(STEPS[state.index])) return;
+  const step = STEPS[state.index];
+  if (!canContinue(step)) return;
+  if (step.question) document.dispatchEvent(new CustomEvent('dancefit:answer', { detail: { step: step.id, index: state.index + 1, value: state.answers[step.id] } }));
   go(state.index + 1);
 }
 
@@ -67,7 +69,7 @@ function ageScreen(step) {
     <div class="social-proof"><div class="avatars">${asset('iconespergunta1', '', '')}${asset('iconespergunta1(2)', '', '')}${asset('iconespergunta1(3)', '', '')}<span class="avatar-heart" aria-hidden="true">♥</span></div><p><strong>+52.347 mujeres</strong> ya han comenzado<br>y están transformando sus vidas.</p></div>
     <h2 class="question-label">¿Cuál es tu grupo de edad?</h2>
     <div class="age-grid">${step.options.map(o => `<button class="age-card" data-choice="${o.value}" aria-pressed="${savedSelection(step, o.value)}">${asset(o.image, '', '', 'fetchpriority="high"')}<span class="age-label">${o.label}<span class="arrow-small" aria-hidden="true">→</span></span></button>`).join('')}</div>
-    <div class="trust-note"><span class="trust-icon">${lockIcon}</span><p><strong>100% seguro y confidencial</strong>Tus respuestas solo se usarán para personalizar tu plan.</p></div>`;
+    <div class="trust-note"><span class="trust-icon">${lockIcon}</span><p><strong>100% seguro y confidencial</strong>Usamos tus respuestas para personalizar tu plan y mejorar la experiencia. Nunca compartimos tu nombre.</p></div>`;
 }
 function curve(type) {
   const paths = { up: 'M5 31C10 8 16 6 27 6H43', wave: 'M5 31C14-2 32-2 43 31', flat: 'M4 28H17C24 28 24 13 32 13H43', zigzag: 'M4 25C5 12 13 12 14 25S22 35 25 24S32 12 35 24S42 33 44 32' };

@@ -6,6 +6,6 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "assets": "node scripts/sync-assets.mjs",
-    "check": "node --check dist/app.js && node --check dist/content.js && node --check dist/config.js && node --test tests/logic.test.mjs"
+    "check": "node --check dist/app.js && node --check dist/content.js && node --check dist/config.js && node --check dist/analytics.js && node --test tests/logic.test.mjs tests/analytics.test.mjs"
   }
 }

@@ -79,7 +79,7 @@ Os demais números e depoimentos fornecidos pelo usuário foram mantidos como co
 
 Escolhas simples avançam após o clique. Perguntas de múltipla escolha têm confirmação. Voltar permite revisar respostas. “Nenhuma das anteriores” exclui outras limitações. Altura e peso podem ser digitados ou ajustados; a troca de unidades converte a mesma medida. Nome, meta, nível, rotina e objetivo aparecem no resultado.
 
-As respostas ficam apenas no `sessionStorage` da aba, com validade de 24 horas. Não há banco de dados nem envio de medidas. A página carrega o Pixel da Meta (PageView e InitiateCheckout no clique de compra) e o pixel da Utmify, ambos em `dist/index.html`; nome, medidas e respostas não são enviados a eles. Recarregar a aba retoma a etapa; uma nova sessão começa do início. Eventos locais opcionais `dancefit:step` e `dancefit:checkout` não transmitem dados por si mesmos.
+As respostas ficam apenas no `sessionStorage` da aba, com validade de 24 horas. Não há banco de dados nem envio de medidas. A página carrega o Pixel da Meta (PageView e InitiateCheckout no clique de compra) e o pixel da Utmify, ambos em `dist/index.html`; nome, medidas e respostas não são enviados a eles. As métricas do quiz vão para o PostHog (`dist/analytics.js`): etapas vistas, respostas das perguntas de escolha, medidas em faixas de 10 unidades e clique de compra. O nome nunca é enviado; a gravação de sessão mascara os campos digitados. Recarregar a aba retoma a etapa; uma nova sessão começa do início. Eventos locais opcionais `dancefit:step` e `dancefit:checkout` não transmitem dados por si mesmos.
 
 ## Verificação
 
