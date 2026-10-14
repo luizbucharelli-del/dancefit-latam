@@ -1,7 +1,8 @@
 // Métricas do quiz no PostHog. Escuta os eventos emitidos por app.js:
 //   dancefit:step     → quiz_step_viewed
 //   dancefit:answer   → quiz_answered (+ registra ans_* para quebrar a compra por resposta)
-//   dancefit:checkout → checkout_clicked
+//   dancefit:plan     → plan_selected (troca de plano na oferta)
+//   dancefit:checkout → checkout_clicked (com o plano escolhido)
 // O nome digitado nunca é enviado. Medidas vão em faixas, nunca o valor exato.
 import { STEPS } from './content.js';
 
@@ -90,8 +91,13 @@ if (typeof document !== 'undefined') {
     client.capture('quiz_answered', result.props);
   });
 
+  document.addEventListener('dancefit:plan', event => {
+    const { plan, price, currency } = event.detail || {};
+    ph()?.capture('plan_selected', { plan, price, currency });
+  });
+
   document.addEventListener('dancefit:checkout', event => {
-    const { price, currency, configured } = event.detail || {};
-    ph()?.capture('checkout_clicked', { price, currency, checkout_configured: Boolean(configured) });
+    const { price, currency, configured, plan } = event.detail || {};
+    ph()?.capture('checkout_clicked', { plan, price, currency, checkout_configured: Boolean(configured) });
   });
 }

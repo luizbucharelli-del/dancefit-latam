@@ -20,3 +20,25 @@ dialog{border:1px solid var(--line);border-radius:22px;max-width:440px;width:cal
 
 /* Fuller typography and the compact reference layout. */
 body{font-weight:600}h1,h2,h3,strong,.choice-copy strong{font-weight:800}.heading>p,.benefits li,.faq details p,.access-card p,.guarantee p,.plan-facts dd{font-weight:600}.screen[data-step=plan] .plan-head{margin-bottom:25px}.screen[data-step=plan] .plan-intro{margin-bottom:24px}.screen[data-step=plan] .plan-facts{gap:10px}.screen[data-step=plan] .plan-facts>div{padding:16px}.screen[data-step=plan] .continue{margin-top:23px}.dance-editorial{padding:28px 24px;border:1px solid var(--line);border-radius:18px;background:#fff1f3}.editorial-eyebrow{color:var(--deep);font-size:.8125rem;font-weight:800;letter-spacing:1px;margin-bottom:14px}.dance-editorial h2{font-size:1.7rem;line-height:1.25;margin-bottom:20px}.dance-editorial>p:not(.editorial-eyebrow),.dance-editorial li{font-size:1rem;line-height:1.65}.dance-editorial ul{padding-left:20px;display:grid;gap:13px;margin:22px 0 0}
+/* Planos da oferta: cartões selecionáveis (radio nativo, acessível por teclado) */
+.plans{border:0;margin:0 0 20px;padding:0;display:grid;gap:12px;min-width:0}
+.plans legend{font-size:1.05rem;font-weight:800;text-align:center;margin:0 auto 14px;padding:0}
+.plan-option{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"radio info price" "radio day day";align-items:center;column-gap:14px;row-gap:8px;padding:18px 18px 16px;border:2px solid #eadde0;border-radius:15px;background:#fff;cursor:pointer;transition:border-color .16s,background .16s,box-shadow .16s}
+.plan-option:hover{border-color:#e9a9bf}
+.plan-option input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.plan-option:has(input:checked){border-color:var(--deep);background:#fff5f8;box-shadow:0 0 0 3px #e4428517}
+.plan-option:has(input:focus-visible){outline:3px solid #982650;outline-offset:3px}
+.plan-option.is-featured{margin-top:10px}
+.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(95deg,#c73b62,#bc3269);color:#fff;font-size:.6875rem;font-weight:800;letter-spacing:.8px;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.plan-radio{grid-area:radio;width:22px;height:22px;border-radius:50%;border:2px solid #c9b3bc;background:#fff;display:grid;place-items:center;transition:border-color .16s}
+.plan-option:has(input:checked) .plan-radio{border-color:var(--deep)}
+.plan-option:has(input:checked) .plan-radio:after{content:'';width:11px;height:11px;border-radius:50%;background:var(--deep)}
+.plan-info{grid-area:info;min-width:0;line-height:1.3}
+.plan-info strong{display:block;font-size:1rem;font-weight:800}
+.plan-info small{display:block;font-size:.8125rem;color:var(--muted);margin-top:4px}
+.plan-price{grid-area:price;text-align:right;line-height:1.1}
+.plan-price del{display:block;font-size:.8125rem;color:#a19199;margin-bottom:3px}
+.plan-price strong{display:block;font-size:1.55rem;letter-spacing:-.6px;white-space:nowrap}
+.plan-day{grid-area:day;font-size:.8125rem;color:#1d6b3f;background:#e9f5ec;border-radius:8px;padding:7px 10px;line-height:1.35}
+.plan-day b{font-weight:800}
+@media(max-width:600px){.plan-option{padding:16px 14px 14px;column-gap:11px}.plan-price strong{font-size:1.35rem}.plan-info strong{font-size:.9375rem}}

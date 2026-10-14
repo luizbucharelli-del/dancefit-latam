@@ -73,6 +73,16 @@ export function priceLabel(value, currency = 'USD') {
   return new Intl.NumberFormat('es-AR', { style: 'currency', currency, minimumFractionDigits: 2 }).format(value).replace('USD', 'US$');
 }
 
+/** Valor por dia de um plano (ex.: 9,90 em 30 dias → 0,33). null para planos sem duração (vitalício). */
+export function perDay(price, days) {
+  return Number.isFinite(price) && Number.isFinite(days) && days > 0 ? Math.round((price / days) * 100) / 100 : null;
+}
+
+/** Plano escolhido; se o id não existir, o destacado (featured) ou o primeiro. */
+export function selectPlan(plans, id) {
+  return plans.find(plan => plan.id === id) || plans.find(plan => plan.featured) || plans[0] || null;
+}
+
 export function escapeHtml(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 }

@@ -1,6 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { toggleSelection, toDisplay, toMetric, bmi, profile, priceLabel, escapeHtml, safeCheckoutUrl } from '../dist/logic.js';
+import { toggleSelection, toDisplay, toMetric, bmi, profile, priceLabel, escapeHtml, safeCheckoutUrl, perDay, selectPlan } from '../dist/logic.js';
+import { CONFIG } from '../dist/config.js';
+
+test('Planos: valor por dia, riscado maior que o preço e links HTTPS', () => {
+  assert.equal(perDay(9.90, 30), 0.33);
+  assert.equal(perDay(14.90, 180), 0.08);
+  assert.equal(perDay(19.90, null), null);
+  assert.match(priceLabel(perDay(9.90, 30)), /US\$\s*0,33/);
+  assert.equal(CONFIG.plans.length, 3);
+  for (const plan of CONFIG.plans) {
+    assert.ok(plan.compareAtPrice > plan.price, `${plan.id}: riscado maior que o preço`);
+    assert.ok(safeCheckoutUrl(plan.checkoutUrl), `${plan.id}: checkout HTTPS válido`);
+  }
+  assert.equal(selectPlan(CONFIG.plans, 'lifetime').price, 19.90);
+  assert.equal(selectPlan(CONFIG.plans, undefined).id, 'semiannual');
+  assert.equal(selectPlan(CONFIG.plans, 'inexistente').id, 'semiannual');
+});
 
 test('Nenhuma das anteriores exclui as limitações e vice-versa', () => {
   assert.deepEqual(toggleSelection(['back', 'knees'], 'none'), ['none']);
