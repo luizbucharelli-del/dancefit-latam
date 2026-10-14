@@ -14,7 +14,7 @@ Abra `http://127.0.0.1:4173`. Os arquivos publicados ficam em `dist/`; podem ser
 
 ## Checkout e planos
 
-A oferta final mostra 3 planos, configurados em `dist/config.js` (`plans`): Mensual US$ 9,90 (de 19,90), Semestral US$ 14,90 (de 39,90, destacado e pré-selecionado) e Vitalicio US$ 19,90 (de 59,90), todos em pagamento único, cada um com o seu link da Centerpag. O valor por dia é calculado a partir de `days` (30 e 180); o vitalício (`days: null`) não mostra valor por dia. O plano escolhido fica salvo na sessão e define o link do botão de compra, o valor do InitiateCheckout no Meta e o `plan` do evento `checkout_clicked` no PostHog (que também registra `plan_selected`). O preço exibido não altera o preço cadastrado na Centerpag: mantenha os dois iguais. Apenas UTMs e parâmetros de atribuição conhecidos são repassados ao checkout; nome, medidas e respostas nunca.
+A oferta final mostra 3 planos, configurados em `dist/config.js` (`plans`): Mensual US$ 9,90 (de 19,90), Semestral US$ 14,90 (de 39,90, destacado e pré-selecionado) e Vitalicio US$ 19,90 (de 59,90), todos em pagamento único, cada um com o seu link da Centerpag. O valor por dia é calculado a partir de `days` (30 e 180); o vitalício (`days: null`) não mostra valor por dia. Cada plano tem o seu próprio botão de compra com o seu link; o botão define o valor do InitiateCheckout no Meta e o `plan` do evento `checkout_clicked` no PostHog. O botão do final da página («Elegir mi plan») leva de volta aos planos. O preço exibido não altera o preço cadastrado na Centerpag: mantenha os dois iguais. Apenas UTMs e parâmetros de atribuição conhecidos são repassados ao checkout; nome, medidas e respostas nunca.
 
 ## Personalização
 

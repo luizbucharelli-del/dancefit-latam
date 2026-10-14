@@ -153,23 +153,20 @@ function planScreen() {
   ];
   return `<div class="plan-head">${asset(state.answers.age === '50+' ? 'pergunta1(2)' : 'pergunta1', '', 'plan-avatar')}<div><p>plan</p><h1>DanceFit</h1><strong>de ${name}</strong></div></div><p class="plan-intro">Creamos un <strong>plan personalizado</strong> basado en tus respuestas.</p><dl class="plan-facts">${rows.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${nextButton('Ver mi plan completo')}`;
 }
-function currentPlan() { return selectPlan(CONFIG.plans, state.plan); }
-function plansPicker() {
-  const chosen = currentPlan();
+function plansList() {
   const cards = CONFIG.plans.map(plan => {
     const daily = perDay(plan.price, plan.days);
-    return `<label class="plan-option${plan.featured ? ' is-featured' : ''}">
-      <input type="radio" name="plan" value="${plan.id}" ${plan.id === chosen.id ? 'checked' : ''}>
+    return `<article class="plan-option${plan.featured ? ' is-featured' : ''}">
       ${plan.badge ? `<span class="plan-badge">${plan.badge}</span>` : ''}
-      <span class="plan-radio" aria-hidden="true"></span>
       <span class="plan-info"><strong>${plan.name}</strong><small>${plan.access} · Pago único</small></span>
       <span class="plan-price">${plan.compareAtPrice > plan.price ? `<del aria-label="Precio normal ${priceLabel(plan.compareAtPrice, CONFIG.currency)}">${priceLabel(plan.compareAtPrice, CONFIG.currency)}</del>` : ''}<strong>${priceLabel(plan.price, CONFIG.currency)}</strong></span>
       <span class="plan-day">${daily !== null ? `Solo <b>${priceLabel(daily, CONFIG.currency)}</b> por día` : '<b>Paga una vez</b> y es tuyo para siempre'}</span>
-    </label>`;
+      <button class="primary purchase plan-buy" data-action="checkout" data-plan="${plan.id}">Quiero el ${plan.name} ${arrowIcon}</button>
+    </article>`;
   }).join('');
-  return `<fieldset class="plans"><legend>Elige tu plan</legend>${cards}</fieldset>`;
+  return `<div class="plans" id="planes"><h2 class="plans-title">Elige tu plan</h2>${cards}</div>`;
 }
-function buyButton() { return `<button class="primary purchase" data-action="checkout">Quiero empezar ahora ${arrowIcon}</button>`; }
+function backToPlans() { return `<button class="primary purchase" data-action="show-plans">Elegir mi plan ${arrowIcon}</button>`; }
 function offerScreen() {
   const info = profile(state.answers);
   reviewDeadline = Date.now() + CONFIG.reviewDurationSeconds * 1000;
@@ -180,10 +177,10 @@ function offerScreen() {
   return `<div class="heading"><h1>¡Accede ya a tu plan de ${info.goals.includes('weight') && info.direction === 'lose' ? 'adelgazamiento con baile' : 'baile personalizado'}${name ? `, ${name}` : ''}!</h1><p>${info.path} · ${info.level.toLowerCase()}</p></div>
     <div class="before-after"><figure class="body-figure">${asset(info.beforeImage, 'Representación de la opción corporal que elegiste')}<figcaption>Ahora</figcaption></figure><span class="transform-arrow" aria-hidden="true">›</span><figure class="body-figure">${asset(info.afterImage, 'Representación del objetivo corporal que elegiste')}<figcaption>Tu objetivo</figcaption></figure></div>
     <ul class="benefits"><li>Tu programa de ${CONFIG.programDays} días: ${info.goal.toLowerCase()}.</li><li>Empieza con ${info.startMinutes} minutos por sesión, ${info.days} días por semana, dentro de los ${info.minutes} minutos que tienes disponibles.</li><li>${info.rhythm}. Áreas de interés: ${info.focus.toLowerCase()}.</li><li>${info.needsReview ? 'Propuesta pendiente de revisar tus molestias antes de iniciar.' : 'Una progresión de cuatro semanas a tu ritmo.'}</li><li>Más de 300 entrenamientos de baile y programas especiales.</li><li>Practica en cualquier lugar y sin equipo.</li></ul>
-    ${timer}<div class="price-card">${plansPicker()}${buyButton()}<p class="secure-payment">${lockIcon} Pago 100% seguro</p></div>
+    ${timer}<div class="price-card">${plansList()}<p class="secure-payment">${lockIcon} Pago 100% seguro</p></div>
     <section class="access-card"><h2>¿Cómo recibiré mi acceso a todo esto?</h2><p>Después de confirmar tu compra, recibirás un correo electrónico con tu acceso a nuestra Área de Alumnas. Dentro encontrarás todas las clases organizadas, una para cada día de la semana: solo tienes que darle play y empezar.</p></section>
     <section class="guarantee">${asset('guarantee', 'Garantía de devolución de 7 días')}<h2>Garantía de devolución del 100% de tu dinero</h2><p>Confiamos en la calidad de nuestro plan. Si en ${CONFIG.guaranteeDays} días no sientes la diferencia, solo tienes que avisarnos y te devolvemos cada centavo.</p></section>
-    <section><h2 class="faq-heading">Lo que la gente suele preguntar</h2><div class="faq">${FAQ.map(([question, answer], i) => `<details ${i === 0 ? 'open' : ''}><summary>${question}</summary><p>${answer}</p></details>`).join('')}</div></section>${buyButton()}`;
+    <section><h2 class="faq-heading">Lo que la gente suele preguntar</h2><div class="faq">${FAQ.map(([question, answer], i) => `<details ${i === 0 ? 'open' : ''}><summary>${question}</summary><p>${answer}</p></details>`).join('')}</div></section>${backToPlans()}`;
 }
 
 function render() {
@@ -259,8 +256,10 @@ app.addEventListener('click', event => {
     app.querySelector(`[data-unit="${selection}"]`)?.focus({ preventScroll: true });
   }
   if (event.target.closest('[data-action=next]')) { event.preventDefault(); next(); }
-  if (event.target.closest('[data-action=checkout]')) {
-    const plan = currentPlan();
+  if (event.target.closest('[data-action=show-plans]')) document.querySelector('#planes')?.scrollIntoView({ block: 'start' });
+  const buy = event.target.closest('[data-action=checkout]');
+  if (buy) {
+    const plan = selectPlan(CONFIG.plans, buy.dataset.plan);
     const url = safeCheckoutUrl(plan.checkoutUrl, location.search);
     document.dispatchEvent(new CustomEvent('dancefit:checkout', { detail: { configured: Boolean(url), price: plan.price, currency: CONFIG.currency, plan: plan.id } }));
     if (url) location.assign(url);
@@ -293,14 +292,6 @@ app.addEventListener('input', event => {
     app.querySelector('[data-action=next]').disabled = !valid;
     persist();
   }
-});
-app.addEventListener('change', event => {
-  if (event.target.name !== 'plan') return;
-  const plan = selectPlan(CONFIG.plans, event.target.value);
-  state.plan = plan.id;
-  persist();
-  app.querySelectorAll('input[name=plan]').forEach(input => { input.checked = input.value === plan.id; });
-  document.dispatchEvent(new CustomEvent('dancefit:plan', { detail: { plan: plan.id, price: plan.price, currency: CONFIG.currency } }));
 });
 app.addEventListener('submit', event => { event.preventDefault(); next(); });
 back.addEventListener('click', () => go(state.index - 1));
